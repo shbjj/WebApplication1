@@ -1,0 +1,251 @@
+﻿@{
+    ViewData["Title"] = "Detalle trabe columna";
+    List<Ancla> listaAnclas = ViewData["listaAnclas"] as List<Ancla>;
+    List<PerfilDelAISC> listaPerfiles = ViewData["listaPerfiles"] as List<PerfilDelAISC>;
+}
+<h5 class="text-center">
+    Datos para el diseño de compreción de placa base
+</h5>
+<!--Datos seleccionados en pantalla Calculo de tornilleria-->
+<div class="row mb-2">
+    <div class="col-md-3">
+        <span class="font-weight-bold">Pieza del elemento: </span>
+    </div>
+    <div class="col-md-2">
+        <span class="font-weight-bold">Grupo: </span>@ViewData["grupo"]
+    </div>
+    <div class="col-md-2">
+        <span class="font-weight-bold">Perfil: </span>@ViewData["perfil"]
+    </div>
+    <div class="col-md-5">
+        <div class="row">
+            <label class="col-md-5 col-form-label cols font-weight-bold" for="tension_max">Tensión máxima (kN): </label>
+            <div class="col-md-7 cols">
+                <input type="text" class="form-control" id="tension_max" />
+            </div>
+        </div>
+    </div>
+</div>
+<!--Imagen 1 y Datos de concreto, Acero placa y anclas-->
+<div class="row">
+    <!--Imagen 1-->
+    <div class="col-md-3">
+        <img src="~/Imagenes/Captura_PlacaBase.PNG" class="card-img-top" />
+    </div>
+    <!--Datos de concreto, Acero placa y anclas-->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-body bg-card-body">
+
+                <h5 class="text-center">Concreto</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fckN_concreto">f'c (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fckN_concreto" type="text" class="form-control" />
+                    </div>
+
+                    <label class="col-md-2 col-form-label cols" for="fckg_concreto">f'c (kg/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fckg_concreto" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <h5 class="text-center mt-2">Acero placa</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fy_placa">Fy (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fy_placa" type="text" class="form-control" />
+                    </div>
+                    <label class="col-md-2 col-form-label cols" for="fu_placa">Fu (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fu_placa" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <h5 class="text-center mt-2">Acero anclas</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fy_anclas">Fy (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fy_anclas" type="text" class="form-control" />
+                    </div>
+                    <label class="col-md-2 col-form-label cols" for="fu_anclas">Fu (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fu_anclas" type="text" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--Imagen 2 y Diametro ancla, cant anclas, espesor propuesto de placa -->
+<div class="row">
+    <!--Imagen 2-->
+    <div class="col-md-7">
+        <img src="\Imagenes\Zonas_PlacaColumna.PNG" class="card-img-top " />
+    </div>
+    <!--Diametro ancla, cant anclas, espesor propuesto de placa-->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body bg-card-body">
+                <div class="row">
+                    <label class="col-md-7 col-form-label cols" for="num_perfil">Número de perfil</label>
+                    <div class="col-md-5 cols">
+                        <select id="num_perfil" class="form-control">
+                            @foreach (PerfilDelAISC perfil in listaPerfiles)
+                            {
+                                <option value="@perfil.Numero">@perfil.Numero</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="diametro_ancla">Diámetro ancla (mm)</label>
+                    <div class="col-md-5 cols">
+                        <select id="diametro_ancla" class="form-control">
+                            <!--Recorrer listaAnclas-->
+                            @foreach (Ancla ancla in listaAnclas)
+                            {
+                                <option>@ancla.Mm.ToString("F") mm (@ancla.Pulgada in)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="diametro_ancla">Cantidad de anclas</label>
+                    <div class="col-md-5 cols">
+                        <select id="cantidad_anclas" class="form-control">
+                            <option value="4">4</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="espesor_propuesto_ancla">Espesor propuesto de ancla</label>
+                    <div class="col-md-5 cols">
+                        <input id="espesor_propuesto_ancla" type="text" class="form-control" />
+                    </div>
+                </div>
+                <input id="Button1" type="button" value="Calcular" class="btn btn-success  btn-block mt-1" onclick="calcular()" />
+                <a href="javascript:history.back()" class="btn btn-danger  btn-block mt-1">Volver atrás</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Resultados-->
+<div style="display: none" id="resultados">
+
+
+    <div class="row mt-2">
+        <div class="col-lg-4">
+            <!--Zona de revisión 1-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 1
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            Ancho de la franja (cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Momento(kN/cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa (cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!--Zona de revisión 1-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 2
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            Largo de la franja (cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Momento(kN/cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa (cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body bg-card-body correcto">
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa definitivo (cm)
+                        </div>
+                        <div class="col-3">
+                            777
+                        </div>
+                    </div>
+
+                    <h5 class="mt-2">Interacción </h5>
+                    <div class="row">
+                        <div class="col-9">
+                            % Ten-V
+                        </div>
+                        <div class="col-3">
+                            90
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calcular() {
+        var resultado = document.getElementById("resultados");
+
+        if (resultado.style.display == "none") {
+            resultado.style.display = "block";
+            window.location.hash = "resultados";
+        }
+        else {
+            resultado.style.display = "none"
+        }
+    }
+</script>

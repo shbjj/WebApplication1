@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication1</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    
+    <div class="container">
+        <!--Imagenes-->
+        <div class="row">
+            <div class="col-2">
+                <img src="~/Imagenes/corte_logo.png" class="card-img-top" />
+            </div>
+            <div class="col-9">
+                <img src="~/Imagenes/DISEM.png" class="card-img-top" />
+            </div>
+            <div class="col-1">
+                <img src="~/Imagenes/logoIneel.png" class="card-img-top" />
+            </div>
+        </div>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        const especificaciones = {
+            scrollY: 150,
+            scrollCollapse: true,
+            searching: false,
+            paging: false,
+            info: false
+        };
+
+        var dataSet = [];
+        var table2;
+            
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+            });
+
+            var table = $('#myTable').DataTable(especificaciones);
+            $('#myTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+            table2 = $('#myTable2').DataTable(
+                {
+                    data: dataSet,
+                    columns:
+                        [
+                            { title: "ID" },
+                            { title: "Eje" },
+                            { title: "Nombre" },
+                            { title: "Tipo" },
+                            { title: "Elemento" }
+                    ],
+                    scrollY: 150,
+                    scrollCollapse: true,
+                    searching: false,
+                    paging: false,
+                    info: false
+                });
+            $('#myTable2 tbody').on('click', 'tr', function () {
+                //Opciones para sombrear renglon seleccionado
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    table2.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+                //Obtener valores del renglon seleccionado
+                    var data = table2.row(this).data();
+                    noPieza.value = data[0];
+                    //Dato elemento trabe
+                    document.querySelector('#datoElemento').value = data[4];
+                    //Dato tipo ID
+                document.querySelector('#datoTipo').value = data[3];
+                document.querySelector('#nombrePiezaMarco').value = data[2];
+
+                //Habilitar el boton de Calculo de Tornilleria
+                document.querySelector('#calculoTornilleria').disabled = false;
+                /*if (data[4] == "columna") {
+                    document.getElementById("detalleTrabeColumna").disabled = false;
+                }
+                else {
+                    document.getElementById("detalleTrabeColumna").disabled = true;
+                }*/
+
+            });
+            var table3 =$('#myTable3').DataTable(especificaciones);
+            
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

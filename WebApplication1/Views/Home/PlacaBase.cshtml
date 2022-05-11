@@ -1,0 +1,669 @@
+﻿
+@{
+    ViewData["Title"] = "Placa Base";
+    List<Ancla> listaAnclas = ViewData["listaAnclas"] as List<Ancla>;
+    List<PerfilDelAISC> listaPerfiles = ViewData["listaPerfiles"] as List<PerfilDelAISC>;
+}
+<h5 class="text-center">
+    Datos para el diseño de placa base
+</h5>
+<style>
+    pre {
+        outline: 1px solid #ccc;
+        padding: 5px;
+        margin: 5px;
+    }
+
+    .string {
+        color: green;
+    }
+
+    .number {
+        color: darkorange;
+    }
+
+    .boolean {
+        color: blue;
+    }
+
+    .null {
+        color: magenta;
+    }
+
+    .key {
+        color: red;
+    }
+</style>
+<!--Datos seleccionados en pantalla Calculo de tornilleria-->
+<div class="row mb-2">
+    <div class="col">
+        <span class="font-weight-bold">Pieza del elemento: </span>@ViewData["nombrePiezaMarco"]
+    </div>
+    <div class="col">
+        <span class="font-weight-bold">Grupo: </span>@ViewData["grupo"]
+    </div>
+    <div class="col">
+        <span class="font-weight-bold">Perfil: </span>@ViewData["perfil"]
+    </div>
+</div>
+<!--Imagen 1 y Datos de concreto, Acero placa y anclas-->
+<div class="row">
+    <!--Imagen 1-->
+    <div class="col-md-3">
+        <img src="~/Imagenes/Captura_PlacaBase.PNG" class="card-img-top" />
+    </div>
+    <!--Datos de concreto, Acero placa y anclas-->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-body bg-card-body">
+                <!--<div class="row">
+                    <label class="col-md-2 col-form-label cols" for="tension_max">Tensión máxima(kN)</label>
+                    <div class="col-md-4 cols">
+                        <input id="tension_max" type="text" class="form-control" />
+                    </div>
+
+                    <label class="col-md-2 col-form-label cols" for="compresion_max">Compresión máxima(kN)</label>
+                    <div class="col-md-4 cols">
+                        <input id="compresion_max" type="text" class="form-control" />
+                    </div>
+                </div>-->
+                <h5 class="text-center">Concreto</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fckN_concreto">f'c (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fckN_concreto" type="text" class="form-control" />
+                    </div>
+
+                    <label class="col-md-2 col-form-label cols" for="fckg_concreto">f'c (kg/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fckg_concreto" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <h5 class="text-center mt-2">Acero placa</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fy_placa">Fy (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fy_placa" type="text" class="form-control" />
+                    </div>
+                    <label class="col-md-2 col-form-label cols" for="fu_placa">Fu (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fu_placa" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <h5 class="text-center mt-2">Acero anclas</h5>
+                <div class="row">
+                    <label class="col-md-2 col-form-label cols" for="fy_anclas">Fy (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fy_anclas" type="text" class="form-control" />
+                    </div>
+                    <label class="col-md-2 col-form-label cols" for="fu_anclas">Fu (kN/cm2)</label>
+                    <div class="col-md-4 cols">
+                        <input id="fu_anclas" type="text" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--Imagen 2 y Diametro ancla, cant anclas, espesor propuesto de placa -->
+<div class="row">
+    <!--Imagen 2-->
+    <div class="col-md-7">
+        <img src="\Imagenes\Zonas_PlacaColumna.PNG" class="card-img-top " />
+    </div>
+    <!--Diametro ancla, cant anclas, espesor propuesto de placa-->
+    <div class="col-md-5 mt-1">
+        <div class="card">
+            <div class="card-body bg-card-body">
+                <div class="row">
+                    <label class="col-md-7 col-form-label cols" for="num_perfil">Número de perfil</label>
+                    <div class="col-md-5 cols">
+                        <select id="num_perfil" class="form-control" onchange="getInfoPerfiles(this)">
+                            @foreach (PerfilDelAISC perfil in listaPerfiles)
+                            {
+                                <option value="@perfil.Numero">@perfil.Numero</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="diametro_ancla">Diámetro ancla (mm)</label>
+                    <div class="col-md-5 cols">
+                        <select id="diametro_ancla" class="form-control">
+                            <!--Recorrer listaAnclas-->
+                            @foreach (Ancla ancla in listaAnclas)
+                            {
+                                <option value="@ancla.Mm">@ancla.Mm.ToString("F") mm (@ancla.Pulgada in)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="diametro_ancla">Cantidad de anclas</label>
+                    <div class="col-md-5 cols">
+                        <select id="cantidad_anclas" class="form-control">
+                            <option value="4">4</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="dist_borde_recortado_det">Dist. borde recortado detallado</label>
+                    <div class="col-md-5 cols">
+                        <input id="dist_borde_recortado_det" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-7 col-form-label cols" for="espesor_propuesto_placa">Espesor propuesto de placa</label>
+                    <div class="col-md-5 cols">
+                        <input id="espesor_propuesto_placa" type="text" class="form-control" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-1">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header font-weight-bold bg-card-header">
+                Compresión
+            </div>
+            <div class="card-body bg-card-body">
+                <div class="row mt-1">
+                    <label class="col-md-5 col-form-label cols" for="compresion_max">Compresión máxima(kN)</label>
+                    <div class="col-md-7 cols">
+                        <input id="compresion_max" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-5 col-form-label cols" for="cortante_comp">Cortante (kN)</label>
+                    <div class="col-md-7 cols">
+                        <input id="cortante_comp" type="text" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header font-weight-bold bg-card-header">
+                Tensión
+            </div>
+            <div class="card-body bg-card-body">
+                <div class="row mt-1">
+                    <label class="col-md-5 col-form-label cols" for="tension_max">Tensión máxima(kN)</label>
+                    <div class="col-md-7 cols">
+                        <input id="tension_max" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-5 col-form-label cols" for="cortante_tens">Cortante (kN)</label>
+                    <div class="col-md-7 cols">
+                        <input id="cortante_tens" type="text" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <input id="Button1" type="button" value="Calcular" class="btn btn-success  btn-block mt-1" onclick="calcular()" />
+        <a href="javascript:history.back()" class="btn btn-danger  btn-block mt-1">Volver atrás</a>
+    </div>
+</div>
+<!--Resultados-->
+<div style="display: none" id="resultados">
+    <h3>Revisión de Tensión</h3>
+
+    <div class="row mt-2">
+        <div class="col-lg-4">
+            <!--Zona de revisión 1-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 1
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            Ancho de la franja (cm)
+                        </div>
+                        <div class="col-3" id="t_zr1_ancho_franja">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Momento(kN/cm)
+                        </div>
+                        <div class="col-3" id="t_zr1_momento">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa (cm)
+                        </div>
+                        <div class="col-3" id="t_zr1_espesor_placa">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!--Zona de revisión 2-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 2
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            Largo de la franja (cm)
+                        </div>
+                        <div class="col-3" id="t_zr2_largo_franja">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Momento(kN/cm)
+                        </div>
+                        <div class="col-3" id="t_zr2_momento">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa (cm)
+                        </div>
+                        <div class="col-3" id="t_zr2_espesor_placa">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body bg-card-body" id="div-color">
+                    <div class="row">
+                        <div class="col-9">
+                            Espesor placa definitivo (cm)
+                        </div>
+                        <div class="col-3" id="t_espesor_placa_definitivo">
+
+                        </div>
+                    </div>
+
+                    <h5 class="mt-2">Interacción </h5>
+                    <div class="row">
+                        <div class="col-9">
+                            % Ten-V
+                        </div>
+                        <div class="col-3" id="t_ten_v">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<pre id="JSON"></pre>
+
+<div style="display: none" id="resultados2">
+    <h3>Revisión de Compresión</h3>
+
+    <div class="row mt-2">
+        <div class="col-lg-3">
+            <!--Zona de revisión 1-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 1
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            Mn
+                        </div>
+                        <div class="col-5" id="c_zr1_Mn">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <!--Zona de revisión 2-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 2
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            Mn
+                        </div>
+                        <div class="col-5" id="c_zr2_Mn">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <!--Zona de revisión 3-->
+            <div class="card">
+                <div class="card-header font-weight-bold bg-card-header">
+                    Zona de revisión 3
+                </div>
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            Mn
+                        </div>
+                        <div class="col-5" id="c_zr3_Mn">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body bg-card-body">
+                <div class="row">
+                    <div class="col-7">
+                        Esp. placa por compresión
+                    </div>
+                    <div class="col-5" id="c_espesor_placa_compresion">
+
+                    </div>
+                </div>
+
+                <h5 class="mt-2">
+                    Aplast. x el cortante, placa
+                </h5>
+                <div class="row">
+                    <div class="col-7">
+                        Ra.
+                        Ancla
+                    </div>
+                    <div class="col-5" id="c_ra_ancla">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-7">
+                        Resistencia aplastamiento
+                    </div>
+                    <div class="col-5" id="c_resistencia_aplastamiento">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-7">
+                        % Aplastamiento
+                    </div>
+                    <div class="col-5" id="c_por_aplastamiento">
+
+                    </div>
+                </div>
+                <h5 class="mt-2">
+                    Cortante en anclas
+                </h5>
+                <div class="row">
+                    <div class="col-7">
+                        RV 1 Ancla
+                    </div>
+                    <div class="col-5" id="c_rv_1_ancla">
+
+                    </div>
+                    <div class="col-7">
+                        Resis. cort.
+                    </div>
+                    <div class="col-5" id="c_resis_cort">
+
+                    </div>
+                    <div class="col-7">
+                        %cor
+                        Anc
+                    </div>
+                    <div class="col-5" id="c_porc_cor_anc">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+</div>
+<pre id="JSON2"></pre>
+
+<script>
+
+    //Al iniciar, poner las variables de perfil con los valores del perfil 1
+    var perfilNum=1;
+    var perfilLado=3.81;
+    var perfilCentroide=1.099;
+    //Obtener el Array de Perfiles a JAVASCRIPT
+    var perfiles = @Html.Raw(Json.Serialize(listaPerfiles));
+
+    //Cambiar valores de variables de perfil, segun el perfil seleccionado
+    function getInfoPerfiles(numeroPerfil) {
+        var temp = perfiles.find(perfil => perfil.numero == numeroPerfil.value);
+        perfilNum = temp.numero;
+        perfilLado = temp.lado;
+        perfilCentroide = temp.centroide;
+    }
+    function calcular() {
+        //Preparar JSON para consulta
+
+        JSONconsultaTension = {
+            "concreto": parseFloat(document.getElementById("fckN_concreto").value),
+            "aceroPlaca_Fy": parseInt(document.getElementById("fy_placa").value),
+            "aceroPlaca_Fu": parseFloat(document.getElementById("fu_placa").value),
+            "aceroAnclas_Fy": parseInt(document.getElementById("fy_anclas").value),
+            "aceroAnclas_Fu": parseFloat(document.getElementById("fu_anclas").value),
+            "piezaElemento": "@ViewData["nombrePiezaMarco"]",
+            "grupo": "@ViewData["grupo"]",
+            "nombrePerfil": "@ViewData["perfil"]",
+            "tensionMax": parseFloat(document.getElementById("tension_max").value),
+            "cortante": parseFloat(document.getElementById("cortante_tens").value),
+            "perfil": {
+                "numeroPerfil": parseInt(perfilNum),
+                "lado": parseFloat(perfilLado),
+                "centroide": parseFloat(perfilCentroide)
+            },
+            "Ancla": {
+                "diametroAncla": parseFloat(document.getElementById("diametro_ancla").value),
+                "cantidadDeAnclas": parseInt(document.getElementById("cantidad_anclas").value),
+                "distanciaBordeRecortadoDet": parseInt(document.getElementById("dist_borde_recortado_det").value)
+            },
+            "zonaRevision1": {
+                "espesorPropuestoDePlaca": parseFloat(document.getElementById("espesor_propuesto_placa").value)
+            }
+        };
+        JSONconsultaTension1 = {
+            "concreto": parseFloat(2.45),
+            "aceroPlaca_Fy": parseInt(25),
+            "aceroPlaca_Fu": parseFloat(40),
+            "aceroAnclas_Fy": parseInt(50),
+            "aceroAnclas_Fu": parseFloat(70),
+            "piezaElemento": "hugo",
+            "grupo": "@ViewData["grupo"]",
+            "nombrePerfil": "@ViewData["perfil"]",
+            "tensionMax": parseFloat(516.705),
+            "cortante": parseFloat(47.07526947),
+            "perfil": {
+                "numeroPerfil": parseInt(55),
+                "lado": parseFloat(12.7),
+                "centroide": parseFloat(3.6429)
+            },
+            "Ancla": {
+                "diametroAncla": parseFloat(25.4),
+                "cantidadDeAnclas": parseInt(4),
+                "distanciaBordeRecortadoDet": parseInt(50)
+            }
+        };
+
+
+        console.log(JSONconsultaTension)
+        var EspPlacaPorTensión;
+        //Consumir API Tension
+        //fetch(`http://www.apitornilleria.somee.com/api/RevisionTension/`, {
+        //fetch(`https://localhost:44343/api/RevisionTension/`, {
+        fetch(`http://hugoblancas-001-site1.ctempurl.com/api/RevisionTension/`, {
+            method: 'POST',
+            body: JSON.stringify(JSONconsultaTension),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+
+
+                console.log(json);
+                document.getElementById("JSON").innerHTML = json;
+                $('#JSON').html(syntaxHighlight(json));
+                //Mostrar resultados
+                resultado = document.getElementById("resultados");
+                resultado.style.display = "block";
+                window.location.hash = "resultados";
+                //Poner los valores
+                //Zona 1
+                    document.getElementById("t_zr1_ancho_franja").innerHTML = json.zonaRevision1.anchoDeLaFranja.toFixed(2);
+                    document.getElementById("t_zr1_momento").innerHTML = json.zonaRevision1.momento.toFixed(2);
+                    document.getElementById("t_zr1_espesor_placa").innerHTML = json.zonaRevision1.espesorPlaca.toFixed(2);
+                //Zona 2
+                document.getElementById("t_zr2_largo_franja").innerHTML = json.zonaRevision2.largoDeLaFranja.toFixed(2);
+                document.getElementById("t_zr2_momento").innerHTML = json.zonaRevision2.momento.toFixed(2);
+                document.getElementById("t_zr2_espesor_placa").innerHTML = json.zonaRevision2.espesorPlaca.toFixed(2);
+                //
+                document.getElementById("t_espesor_placa_definitivo").innerHTML = json.espesorPlacaDefinitivo.toFixed(2);
+
+                document.getElementById("t_ten_v").innerHTML = json.porcentajeTen_V.toFixed(2);
+
+                //Cambiar el color de la tarjeta (correcto/incorrecto)
+                var tarjeta = document.getElementById("div-color");
+                if (json.porcentajeTen_V < 95) {
+                    tarjeta.classList.remove("incorrecto");
+                    tarjeta.classList.add("correcto");
+                }
+                else {
+                    tarjeta.classList.remove("correcto");
+                    tarjeta.classList.add("incorrecto");
+                }
+                calcularCompresion(json.espesorPlacaDefinitivo);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    function calcularCompresion(EspPlacaPorTensión)
+    {
+        JSONconsultaCompresion = {
+            "concreto": parseFloat(document.getElementById("fckN_concreto").value),
+            "aceroPlaca_Fy": parseInt(document.getElementById("fy_placa").value),
+            "aceroPlaca_Fu": parseFloat(document.getElementById("fu_placa").value),
+            "aceroAnclas_Fy": parseInt(document.getElementById("fy_anclas").value),
+            "aceroAnclas_Fu": parseFloat(document.getElementById("fu_anclas").value),
+            "piezaElemento": "@ViewData["nombrePiezaMarco"]",
+            "grupo": "@ViewData["grupo"]",
+            "nombrePerfil": "@ViewData["perfil"]",
+            "CompresionMax": parseFloat(document.getElementById("compresion_max").value),
+            "cortante": parseFloat(document.getElementById("cortante_comp").value),
+            "EspPlacaPorTensión": parseFloat(EspPlacaPorTensión),
+            "perfil": {
+                "numeroPerfil": parseInt(perfilNum),
+                "lado": parseFloat(perfilLado),
+                "centroide": parseFloat(perfilCentroide)
+            },
+            "Ancla": {
+                "diametroAncla": parseFloat(document.getElementById("diametro_ancla").value),
+                "cantidadDeAnclas": parseInt(document.getElementById("cantidad_anclas").value),
+                "distanciaBordeRecortadoDet": parseInt(document.getElementById("dist_borde_recortado_det").value)
+            }
+
+        };
+
+        console.log(JSONconsultaCompresion);
+        //Consumir API Compresion
+        //fetch(`https://localhost:44343/api/RevisionCompresion/`, {
+        //fetch(` http://www.apitornilleria.somee.com/api/RevisionCompresion/`, {
+        fetch(` http://hugoblancas-001-site1.ctempurl.com/api/RevisionCompresion/`, {
+            method: 'POST',
+            body: JSON.stringify(JSONconsultaCompresion),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                //mostrar resultados
+                resultado = document.getElementById("resultados2");
+                resultado.style.display = "block";
+                console.log(json);
+                //Vista temporal
+                document.getElementById("JSON2").innerHTML = json;
+                $('#JSON2').html(syntaxHighlight(json));
+                //Poner los valores
+                //Zona 1
+                document.getElementById("c_zr1_Mn").innerHTML = json.zonaRevision1.mn.toFixed(2);
+                //Zona 2
+                document.getElementById("c_zr2_Mn").innerHTML = json.zonaRevision2.mn.toFixed(2);
+                //Zona 3
+                document.getElementById("c_zr3_Mn").innerHTML = json.zonaRevision3.mn.toFixed(2);
+                //Demas datos
+                document.getElementById("c_espesor_placa_compresion").innerHTML = json.espPlacaPorCompresión.toFixed(2);
+                document.getElementById("c_ra_ancla").innerHTML = json.raAncla.toFixed(2);
+                document.getElementById("c_resistencia_aplastamiento").innerHTML = json.resisAplastamiento.toFixed(2);
+                document.getElementById("c_por_aplastamiento").innerHTML = json.porcentajeApla.toFixed(2);
+                document.getElementById("c_rv_1_ancla").innerHTML = json.rV1Ancla.toFixed(2);
+                document.getElementById("c_resis_cort").innerHTML = json.resisCort.toFixed(2);
+                document.getElementById("c_porc_cor_anc").innerHTML = json.porcentajeCorAncla.toFixed(2);
+
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+</script>
+<script type="text/javascript">
+    function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+            json = JSON.stringify(json, undefined, 2);
+        }
+        json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+</script>
+
