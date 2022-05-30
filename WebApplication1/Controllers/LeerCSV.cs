@@ -81,7 +81,37 @@ namespace WebApplication1.Controllers
                 //Aumentar contador
                 cont++;
             }
+
             return listA;
+        }
+        public static Dictionary<string, string> LeerUbicacion(String path)
+        {
+            //Variable contadora
+            int cont = 0;
+
+
+            //Guardar en una lista de ubicaciones
+            Dictionary<string, string> ubicaciones = new Dictionary<string, string>();
+
+            //Obtener todo el texto del archivo CSV
+            string csvData = System.IO.File.ReadAllText(path + "/csv/Grupos_localizacion.csv");
+
+            //Recorrer la informacion, por cada renglon
+            foreach (string row in csvData.Split("\n"))
+            {
+                //Si el renglon no esta vacio
+                if (!string.IsNullOrEmpty(row))
+                {
+                    if (cont > 1)
+                    {
+                        ubicaciones.Add(row.Split(",")[1], row.Split(",")[2]);
+                    }
+                }
+
+                //Aumentar contador
+                cont++;
+            }
+            return ubicaciones;
         }
     }
 }

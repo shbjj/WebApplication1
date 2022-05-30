@@ -165,6 +165,51 @@ namespace WebApplication1.Controllers
             }
             return listaPiezas;
         }
+        public List<GrupoPerfil> ConsultaGrupoPerfil(string idPieza, string WebRootPath)
+        {
+            string sql= "select g.idGrupo as IdGrupo, g.idPerfil as IdPerfil, g.nombre as NombreGrupo, " +
+                "p.nombre as NombrePerfil, p.dimension as Dimension, p.espesor as Espesor " +
+                "from grupo g, perfilcelosia p " +
+                "where g.idPieza = "+idPieza+" and(p.idPerfilcelosia = g.idPerfil); ";
+            List<GrupoPerfil> gruposPerfil = new List<GrupoPerfil>();
+            Dictionary<string, string> ubicaciones = LeerCSV.LeerUbicacion(WebRootPath);
+
+            // Muestra la lista de piezas para el marco
+            MySqlDataReader reader = null;
+            MySqlConnection connectionDB = Conexion.conexion();
+            connectionDB.Open();
+            try
+            {
+                MySqlCommand comando = new MySqlCommand(sql, connectionDB);
+                reader = comando.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        GrupoPerfil temp = new GrupoPerfil();
+                        temp.IdGrupo = reader.GetInt32("IdGrupo");
+                        temp.IdPerfil = reader.GetInt32("IdPerfil");
+                        temp.NombreGrupo = reader.GetString("NombreGrupo");
+                        temp.NombrePerfil = reader.GetString("NombrePerfil");
+                        temp.DimensionPerfil = reader.GetDouble("Dimension");
+                        temp.EspesorPerfil = reader.GetDouble("Espesor");
+                        string nombGrupo = reader.GetString("NombreGrupo");
+                        temp.Ubicacion = ubicaciones[nombGrupo.Substring(2,nombGrupo.Length-2)];
+
+                        gruposPerfil.Add(temp);
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                return null;
+            }
+            finally
+            {
+                connectionDB.Close();
+            }
+            return gruposPerfil;
+        }
 
         public List<Object> ConsultaGrupo(string dato)
         {

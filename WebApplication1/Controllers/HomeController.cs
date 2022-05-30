@@ -69,12 +69,12 @@ namespace WebApplication1.Controllers
 
 
             //Declarar variables (?
-            double[,] ListaScrews = new double[10, 3];
-            string[,] ListaGpos = new string[35, 3];
-            int NGpo;
+            //double[,] ListaScrews = new double[10, 3];
+            //string[,] ListaGpos = new string[35, 3];
+            //int NGpo;
 
             // Tabla de tornillos
-            ListaScrews[1, 1] = 12.7; ListaScrews[1, 2] = 19.05;          // 1/2
+           /* ListaScrews[1, 1] = 12.7; ListaScrews[1, 2] = 19.05;          // 1/2
             ListaScrews[2, 1] = 15.875; ListaScrews[2, 2] = 22.225;       // 5 /8
             ListaScrews[3, 1] = 19.05; ListaScrews[3, 2] = 25.4;          // 3/4
             ListaScrews[4, 1] = 22.225; ListaScrews[4, 2] = 28.575;       // 7/8
@@ -82,10 +82,10 @@ namespace WebApplication1.Controllers
             ListaScrews[6, 1] = 28.575; ListaScrews[6, 2] = 38.1;         // 1" 1/8
             ListaScrews[7, 1] = 31.75; ListaScrews[7, 2] = 41.275;        // 1" 1/4
             ListaScrews[8, 1] = 34.925; ListaScrews[8, 2] = 43.65625;     // 1" 3/8
-            ListaScrews[9, 1] = 38.1; ListaScrews[9, 2] = 47.625;        // 1" 1/2
+            ListaScrews[9, 1] = 38.1; ListaScrews[9, 2] = 47.625;        // 1" 1/2*/
 
             // Tabla Gpos
-            ListaGpos[1, 1] = "_C_S1"; ListaGpos[1, 2] = "Cuerdas cuerpo piramidal, cara X y Z";
+            /*ListaGpos[1, 1] = "_C_S1"; ListaGpos[1, 2] = "Cuerdas cuerpo piramidal, cara X y Z";
             ListaGpos[2, 1] = "_C_S2"; ListaGpos[2, 2] = "Cuerdas cuerpo recto, cara X y Z";
             ListaGpos[3, 1] = "_C_S3"; ListaGpos[3, 2] = "Cuerdas extensión, cara X y Z";
             ListaGpos[4, 1] = "_D_S1_X"; ListaGpos[4, 2] = "Diagonales cuerpo piramidal cara X";
@@ -105,11 +105,11 @@ namespace WebApplication1.Controllers
             ListaGpos[18, 1] = "_T_S1"; ListaGpos[18, 2] = "Transversales soporte y trabe de remate, cara X y Z";
             ListaGpos[19, 1] = "_T_S2"; ListaGpos[19, 2] = "Transversales trabe de suspensión, cara X y Z";
             ListaGpos[20, 1] = "_T_S3"; ListaGpos[20, 2] = "Transversales trabe superiror, cara X y Z";
-            ListaGpos[21, 1] = "_T_S4"; ListaGpos[21, 2] = "Transversales capitel, cara X y Z";
+            ListaGpos[21, 1] = "_T_S4"; ListaGpos[21, 2] = "Transversales capitel, cara X y Z";*/
 
             //Agregar al listBox los valores de ListaScrews
             //Enviar el ListaScrews a la vista
-            ViewData["_ListaScrews"] = ListaScrews;//No se ocupa ya que se llenno a mano
+            //ViewData["_ListaScrews"] = ListaScrews;//No se ocupa ya que se llenno a mano
 
             //Visualizar los valores
             //Subestacion
@@ -118,14 +118,14 @@ namespace WebApplication1.Controllers
             //Elemento (abajo)
             //Tipo
 
-            NGpo = 0;
+            //NGpo = 0;
             if (_datoElemento == "trabe")
             {
                 //Si el elemento es una trabe
                 //Elegir la imagen
                 ViewData["_imagen"] = "/Imagenes/Grupos_Trabes.PNG";
                 //Dependiendo el tipo de dato, cambiar NGpo
-                switch (_datoTipo)
+                /*switch (_datoTipo)
                 {
                     case "1":
                         NGpo = 4;
@@ -136,12 +136,12 @@ namespace WebApplication1.Controllers
                     case "3":
                         NGpo = 7;
                         break;
-                }
+                }*/
             }
             else
             {
                 ViewData["_imagen"] = "/Imagenes/Grupos_Columnas_Tipo1_2y3.PNG";
-                switch (_datoTipo)
+                /*switch (_datoTipo)
                 {
                     case "1":
                         NGpo = 20;
@@ -155,18 +155,18 @@ namespace WebApplication1.Controllers
                     case "4":
                         NGpo = 6;
                         break;
-                }
+                }*/
             }
 
             //Enviar NGpo
-            ViewData["_NGpo"] = NGpo;
+            //ViewData["_NGpo"] = NGpo;
             //Consultar los grupos y mandarlos a  la vista
             QuerysToBD _ConsultaGpos = new QuerysToBD();
-            ViewData["_listaGrupos"] = _ConsultaGpos.ConsultaGrupo(_noPieza);
+            ViewData["_listaGrupos"] = _ConsultaGpos.ConsultaGrupoPerfil(_noPieza, _hostingEnvironment.WebRootPath);
             //Poner los datos en la tabla
 
             //Poner los ListaGpos en la tabla (enviar el ListaGpos)
-            ViewData["_ListaGpos"] = ListaGpos;
+            //ViewData["_ListaGpos"] = ListaGpos;
 
 
             return CalculoTornilleria();
