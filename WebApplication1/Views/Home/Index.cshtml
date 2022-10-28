@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Selección de subestación y pieza";
     var a = ViewData["a"] as List<string>;
 }
 
@@ -7,154 +7,135 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div> -->
-    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
 
-    <div class="row mt-2">
-        <!--Card Subestaciones en BD DISEM-->
-        <div class="col-lg-5">
-            <div class="card ">
-                <div class="card-header font-weight-bold bg-card-header" pie>
-                    Subestaciones en BD DISEM
-                </div>
-                <div class="card-body bg-card-body">
-                    <h5>Por favor seleccione alguna subestación</h5>
-                    <table class="table table-hover table-sm" id="myTable">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Nombre</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (SubEstacion item in Model)
-                            {
+<div class="row mt-2">
+    <!--Card Subestaciones en BD DISEM-->
+    <div class="col-lg-5">
+        <div class="card ">
+            <div class="card-header font-weight-bold bg-card-header" pie>
+                Subestaciones en BD DISEM
+            </div>
+            <div class="card-body bg-card-body">
+                <h5>Por favor seleccione alguna subestación</h5>
+                <table class="table table-hover table-sm" id="myTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (SubEstacion item in Model)
+                        {
                             <tr onclick="seleccionSubEstacion(@Html.Encode(item.Id))">
                                 <th scope="row" style="padding: 1px 14px">@Html.Encode(item.Id)</th>
                                 <td style="padding: 1px 14px" id="THnombreSubEst_@Html.Encode(item.Id)">@Html.Encode(item.Nombre)</td>
                             </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-        <!--Imagen-->
-        <div class="col-lg-7">
-            <img src="~/Imagenes/columnasTipo.png" class="card-img-top" />
-        </div>
     </div>
+    <!--Imagen-->
+    <div class="col-lg-7">
+        <img src="~/Imagenes/columnasTipo.png" class="card-img-top" />
+    </div>
+</div>
 
-    <div class="row">
-        <!--Card Piezas del marco-->
-        <div class="col-lg-5 mt-1">
-            <div class="card">
-                <div class="card-header font-weight-bold bg-card-header">
-                    Piezas del marco
-                </div>
-                <div class="card-body bg-card-body">
-                    <!-- <div class="row">
-        <div class="col-12">
-            <input id="Button1" type="button" value="Buscar Piezas" class="btn btn-success  btn-block" />
-        </div>
-
-    </div>-->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="idMarco">ID marco</label>
-                            <input id="idMarco" type="text" class="form-control" readonly/>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="nombreMarco">Marco</label>
-                            <input id="nombreMarco" type="text" class="form-control" readonly />
-                        </div>
+<div class="row">
+    <!--Card Piezas del marco-->
+    <div class="col-lg-5 mt-1">
+        <div class="card">
+            <div class="card-header font-weight-bold bg-card-header">
+                Piezas del marco
+            </div>
+            <div class="card-body bg-card-body">
+                <!-- <div class="row">
+                    <div class="col-12">
+                        <input id="Button1" type="button" value="Buscar Piezas" class="btn btn-success  btn-block" />
                     </div>
-                    <h5>Por favor seleccione alguna pieza</h5>
-                    <div class="row">
-                        <div class="col-12">
-                            <table class="table table-hover table-sm table-responsive" id="myTable2">
-                                <!--<thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Eje</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Tipo</th>
-                                        <th scope="col">Elemento</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablePiezasOfMarco">
-                                </tbody>-->
-                            </table>
-                        </div>
+
+                </div>-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="idMarco">ID marco</label>
+                        <input id="idMarco" type="text" class="form-control" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nombreMarco">Marco</label>
+                        <input id="nombreMarco" type="text" class="form-control" readonly />
+                    </div>
+                </div>
+                <h5>Por favor seleccione alguna pieza</h5>
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-hover table-sm table-responsive" id="myTable2">
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-1">
-            <div class="card">
-                <div class="card-header font-weight-bold bg-card-header">
-                    Datos de la pieza seleccionada
-                </div>
-                <div class="card-body bg-card-body">
-                    <!--<div class="row">
-        <div class="col-12">
-            <input id="Button1" type="button" value="Seleccionar" class="btn btn-success  btn-block" />
-        </div>
-    </div>-->
-                    <form action="/Home/CalculoTornilleria" method="post">
-
-                        <div class="row mt-lg-1">
-                            <div class="col-md-4">
-                                <label for="subestacion" class="mt-1">Subestación</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input id="subestacion" type="text" class="form-control" name="subestacion" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mt-lg-1">
-                            <div class="col-md-4">
-                                <label for="marco" class="mt-1">Marco</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input id="marco" type="text" class="form-control" name="marco" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mt-lg-1">
-                            <div class="col-md-4">
-                                <label for="noPieza" class="mt-1">No. Pieza</label>
-                            </div>
-                            <div class="col-md-8">
-                                <input id="noPieza" type="text" class="form-control" name="noPieza" readonly/>
-                            </div>
-                        </div>
-                        <input id="datoElemento" name="datoElemento" type="hidden" />
-                        <input id="datoTipo" name="datoTipo" type="hidden" />
-                        <input id="nombrePiezaMarco" name="nombrePiezaMarco" type="hidden" />
-                        <button id="calculoTornilleria" type="submit" class="btn btn-success btn-block mt-1" disabled>Cálculo de Tornillería</button>
-                        <input id="Button1" type="button" value="Salir" class="btn btn-danger btn-block" />
-                    </form>
-                </div>
-            </div>
-            
-
-        </div>
-        <div class="col-lg-3 mt-1">
-            <img src="~/Imagenes/trabesTipo.png" class="card-img-top" />
-        </div>
     </div>
+    <div class="col-lg-4 mt-1">
+        <div class="card">
+            <div class="card-header font-weight-bold bg-card-header">
+                Datos de la pieza seleccionada
+            </div>
+            <div class="card-body bg-card-body">
+                <form action="/Home/CalculoTornilleria" method="post">
+
+                    <div class="row mt-lg-1">
+                        <div class="col-md-4">
+                            <label for="subestacion" class="mt-1">Subestación</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="subestacion" type="text" class="form-control" name="subestacion" readonly />
+                        </div>
+                    </div>
+                    <div class="row mt-lg-1">
+                        <div class="col-md-4">
+                            <label for="marco" class="mt-1">Marco</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="marco" type="text" class="form-control" name="marco" readonly />
+                        </div>
+                    </div>
+                    <div class="row mt-lg-1">
+                        <div class="col-md-4">
+                            <label for="noPieza" class="mt-1">No. Pieza</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="noPieza" type="text" class="form-control" name="noPieza" readonly />
+                        </div>
+                    </div>
+                    <input id="datoElemento" name="datoElemento" type="hidden" />
+                    <input id="datoTipo" name="datoTipo" type="hidden" />
+                    <input id="nombrePiezaMarco" name="nombrePiezaMarco" type="hidden" />
+                    <button id="calculoTornilleria" type="submit" class="btn btn-success btn-block mt-1" disabled>Cálculo de Tornillería</button>
+                    <input id="Button1" type="button" value="Salir" class="btn btn-danger btn-block" />
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-lg-3 mt-1">
+        <img src="~/Imagenes/trabesTipo.png" class="card-img-top" />
+    </div>
+</div>
 
 <script>
-    const url = 'http://www.apitornilleria.somee.com/';
+    const url = "https://localhost:44343/"
     const idMarco = document.querySelector('#idMarco');
     const nombreMarco = document.querySelector('#nombreMarco');
     const subestacion = document.querySelector('#subestacion');
     const marco = document.querySelector('#marco');
     const noPieza = document.querySelector('#noPieza');
-    //const bodyTablePiezasOfMarco = document.querySelector('#tablePiezasOfMarco'); 
-    //const urlMarcos = 'https://localhost:44343/api/Marcos/';
-    //const urlPiezasDeMarcos = 'https://localhost:44343/api/Piezas/';
-    const urlMarcos = url+'api/Marcos/';
+    const urlMarcos = url + 'api/Marcos/';
     const urlPiezasDeMarcos = url + 'api/Piezas/';
-    
+
 
     function seleccionSubEstacion(id) {
 
@@ -163,27 +144,38 @@
         table2.clear();
         table2.draw();
         subestacion.value = id + ' ' + document.querySelector('#THnombreSubEst_' + id).innerHTML;
-            //Dato elemento trabe
+        //Dato elemento trabe
         document.querySelector('#datoElemento').value = '';
-            //Dato tipo ID
+        //Dato tipo ID
         document.querySelector('#datoTipo').value = '';
         //Deshabilitar el boton de Calculo de Tornilleria
         document.querySelector('#calculoTornilleria').disabled = true;
         //Obtener informacion del marco
-        fetch(`${urlMarcos}${id}`)
-            .then(response => response.json())
-            .then(json => {
-                idMarco.value = json.idMarco;
-                nombreMarco.value = json.nombre;
-                marco.value = json.nombre;
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        $.ajax({
+            url: `/api/Marcos/?id=${id}`,
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                //var json = JSON.parse(data)
+                idMarco.value = data.idMarco;
+                nombreMarco.value = data.nombre;
+                console.log(data)
+                marco.value = data.nombre;
+                // The file was uploaded successfully...
+
+            },
+            error: function (data) {
+                // there was an error.
+            }
+        });
         //Obtener informacion de las piezas del marco
-        fetch(`${urlPiezasDeMarcos}${id}`)
-            .then(response => response.json())
-            .then(data => {
+        $.ajax({
+            url: `/api/pieza/?id=${id}`,
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            success: function (data) {
                 data.forEach(json => {
                     //Agregar los valores a la tabla
                     table2
@@ -192,10 +184,12 @@
                         .node();
                 });
                 console.log(dataSet)
-                })
-            .catch(err => {
-                console.log(err)
-            })
+
+            },
+            error: function (data) {
+                // there was an error.
+            }
+        });
     }
 </script>
 

@@ -1,37 +1,37 @@
 Grupos,,
 idGrupo,Nombre,Localizaci髇
-1,_C_S1,"Cuerdas cuerpo piramidal, cara X y Z"
-2,_C_S2,"Cuerdas cuerpo recto, cara X y Z"
-3,_C_S3,"Cuerdas extensi髇, cara X y Z"
+1,_C_S1,Cuerdas cuerpo piramidal, cara X y Z
+2,_C_S2,Cuerdas cuerpo recto, cara X y Z
+3,_C_S3,Cuerdas extensi贸n, cara X y Z
 4,_D_S1_X,Diagonales cuerpo piramidal cara X
 5,_D_S1_Z,Diagonales cuerpo piramidal cara Z
-6,_D_S2_X,"Diagonales soporte y cuerpo recto, cara X"
-7,_D_S2_Z,"Diagonales soporte y cuerpo recto, cara Z"
-8,_D_S3_X,"Diagonales uni髇 trabe de remate, cara X"
-9,_D_S3_Z,"Diagonales uni髇 trabe de remate, cara Z"
-10,_D_S4_X,"Diagonales uni髇 trabe superior, cara X"
-11,_D_S4_Z,"Diagonales uni髇 trabe de suspensi髇, cara Z"
-12,_D_S5_X,"Diagonales uni髇 trabe superior, cara X"
-13,_D_S5_Z,"Diagonales uni髇 trabe superior, cara Z"
-14,_D_S6,"Diagonales extensi髇, cara X y Z"
-15,_P_S1,"Panel (rombo) soporte y trabe de remate, cara X y Z"
-16,_P_S2,"Panel (rombo) trabe de suspensi髇, cara X y Z"
-17,_P_S3,"Panel (rombo) trabe superior, cara X y Z"
-18,_T_S1,"Transversales soporte y trabe de remate, cara X y Z"
-19,_T_S2,"Transversales trabe de suspensi髇, cara X y Z"
-20,_T_S3,"Transversales trabe superiror, cara X y Z"
-21,_T_S4,"Transversales capitel, cara X y Z"
-22,_D_S1_X_E,"Diagonales cuerpo recto, cara X"
-23,_D_S2_X_E,"Diagonales cuerpo recto, cara Z"
-24,_D_S1_Z_E,"Diagonales trabe de remate, cara X"
-25,_D_S2_Z_E,"Diagonales trabe de remate, cara Z"
-26,_C,"Cuerdas, cara V y H"
-27,_T,"Panel trasversal, cara V y H"
-28,_D_S1_H,"Diagonales tramos extremos (d1, d2), cara H"
-29,_D_S1_V,"Diagonales tramos extremos (d1, d2), cara V"
-30,_D_S2_H,"Diagonales tramos intermedios (s), cara H"
-31,_D_S2_V,"Diagonales tramos intermedios (s), cara V"
-32,_D_S3_H,"Diagonales tramo entre grupos de acometidas, cara H"
-33,_D_S3_V,"Diagonales tramo entre grupos de acometidas, cara V"
+6,_D_S2_X,Diagonales soporte y cuerpo recto, cara X
+7,_D_S2_Z,Diagonales soporte y cuerpo recto, cara Z
+8,_D_S3_X,Diagonales uni贸n trabe de remate, cara X
+9,_D_S3_Z,Diagonales uni贸n trabe de remate, cara Z
+10,_D_S4_X,Diagonales uni贸n trabe superior, cara X
+11,_D_S4_Z,Diagonales uni贸n trabe de suspensi贸n, cara Z
+12,_D_S5_X,Diagonales uni贸n trabe superior, cara X
+13,_D_S5_Z,Diagonales uni贸n trabe superior, cara Z
+14,_D_S6,Diagonales extensi贸n, cara X y Z
+15,_P_S1,Panel (rombo) soporte y trabe de remate, cara X y Z
+16,_P_S2,Panel (rombo) trabe de suspensi贸n, cara X y Z
+17,_P_S3,Panel (rombo) trabe superior, cara X y Z
+18,_T_S1,Transversales soporte y trabe de remate, cara X y Z
+19,_T_S2,Transversales trabe de suspensi贸n, cara X y Z
+20,_T_S3,Transversales trabe superiror, cara X y Z
+21,_T_S4,Transversales capitel, cara X y Z
+22,_D_S1_X_E,Diagonales cuerpo recto, cara X
+23,_D_S2_X_E,Diagonales cuerpo recto, cara Z
+24,_D_S1_Z_E,Diagonales trabe de remate, cara X
+25,_D_S2_Z_E,Diagonales trabe de remate, cara Z
+26,_C,Cuerdas, cara V y H
+27,_T,Panel trasversal, cara V y H
+28,_D_S1_H,Diagonales tramos extremos (d1, d2), cara H
+29,_D_S1_V,Diagonales tramos extremos (d1, d2), cara V
+30,_D_S2_H,Diagonales tramos intermedios (s), cara H
+31,_D_S2_V,Diagonales tramos intermedios (s), cara V
+32,_D_S3_H,Diagonales tramo entre grupos de acometidas, cara H
+33,_D_S3_V,Diagonales tramo entre grupos de acometidas, cara V
 34,_R,Rombos en paneles trasversales
-35,_D,"Diagonales tramos acometidas, cara V y H"
+35,_D,Diagonales tramos acometidas, cara V y H

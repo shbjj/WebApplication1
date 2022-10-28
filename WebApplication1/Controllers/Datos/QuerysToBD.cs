@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
 using WebApplication1.Models;
+using WebApplication1.Models.Piezas;
 
 namespace WebApplication1.Controllers
 {
@@ -126,7 +127,109 @@ namespace WebApplication1.Controllers
             }
             return listaMco;
         }
+        public static Marco GetMarcoDetails(int id)
+        {
+            Marco temp = new Marco();
+            string sql;
+            MySqlDataReader reader = null;
 
+            sql = "SELECT * FROM marco WHERE idMarco=" + id;
+            MySqlConnection connectionDB = Conexion.conexion();
+            connectionDB.Open();
+            try
+            {
+                MySqlCommand comando = new MySqlCommand(sql, connectionDB);
+                reader = comando.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        temp.IdMarco = reader.GetInt32(0);
+                        temp.IdSubestacion = reader.GetInt32(1);
+                        temp.Nombre = reader.GetString(2);
+                        temp.BaseX = reader.GetFloat(3);
+                        temp.BaseZ = reader.GetFloat(4);
+                        temp.Separacion = reader.GetInt32(5);
+                        temp.AlturaGuarda = reader.GetFloat(6);
+                        temp.AlturaSuperior = reader.GetFloat(7);
+                        temp.AlturaSuspension = reader.GetFloat(8);
+                        temp.AlturaRemate = reader.GetFloat(9);
+                        temp.Tension = reader.GetInt32(10);
+                        temp.FrecuenciaX = reader.GetFloat(11);
+                        temp.FrecuenciaZ = reader.GetFloat(12);
+                        temp.BaseZColumnas = reader.GetFloat(13);
+                        temp.BaseXColumnas = reader.GetFloat(14);
+                        temp.BaseSoporteColumnas = reader.GetFloat(15);
+                        temp.Distanciab = reader.GetFloat(16);
+                        temp.IdResponsable = reader.GetInt32(17);
+                        temp.Fecha = reader.GetDateTime(18);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron registros");
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+            }
+            finally
+            {
+                connectionDB.Close();
+            }
+            return temp;
+        }
+        public static List<Pieza> GetPiezasOfMarco(int id)
+        {
+            //Lista de piezas que se retornara
+            List<Pieza> piezas = new List<Pieza>();
+            
+            MySqlDataReader reader = null;
+            //Query de conexion a la BD, obtener todas las piezas que pertenezcan al marco del ID
+            string sql = "SELECT * FROM pieza WHERE idMarco = " + id;
+            //Obtener la conexion y abrirla
+            MySqlConnection connectionDB = Conexion.conexion();
+            connectionDB.Open();
+            try
+            {
+                //Ejecutar consulta
+                MySqlCommand comando = new MySqlCommand(sql, connectionDB);
+                reader = comando.ExecuteReader();
+                //Si hay resultados...
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        //Guardar los datos de la pieza en un objeto temporal
+                        Pieza temp = new Pieza();
+                        temp.IdPieza = reader.GetInt32(0);
+                        temp.IdMarco = reader.GetInt32(1);
+                        temp.Nombre = reader.GetString(2);
+                        temp.Tipo = reader.GetString(3);
+                        temp.Eje = reader.GetString(4);
+                        temp.TipoLlegadas = reader.GetString(5);
+                        temp.Numero = reader.GetInt32(6);
+                        temp.TipoElemento = reader.GetInt32(7);
+                        piezas.Add(temp);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron registros");
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+            }
+            finally
+            {//Finalmente, cerrar conexion
+                connectionDB.Close();
+            }
+            //Retornar lista de piezas
+            return piezas;
+        }
         public List<Object> ConsultaPiezas(string datoMco)
         {
             string StringPiezas;
@@ -296,6 +399,40 @@ namespace WebApplication1.Controllers
                 connectionDB.Close();
             }
             return listaGrupos;
+        }
+        public static double ConsultaEspesorPerfil(int IdGrupo)
+        {
+            double espesor = 0;
+            MySqlDataReader reader = null;
+
+            MySqlConnection connectionDB = Conexion.conexion();
+            connectionDB.Open();
+            try
+            {
+                MySqlCommand comando = new MySqlCommand("SELECT espesor FROM perfilcelosia WHERE idPerfilcelosia=" + IdGrupo,
+                    connectionDB);
+                reader = comando.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        espesor = reader.GetFloat(0);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron registros");
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+            }
+            finally
+            {
+                connectionDB.Close();
+            }
+            return espesor;
         }
     }
 }

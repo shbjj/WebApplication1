@@ -10,7 +10,23 @@
     var temp_piezaElemento = "";
     var temp_grupo = "";
     var temp_perfil = "";
+    float[] dimensionesPlacas = {4.8f,6.4f,7.9f,9.5f,11.1f,12.7f,14.3f,15.9f,19.1f,22.2f
+                                    ,25.4f,28.6f,31.8f,34.9f,38.1f,41.3f,44.5f,50.8f,57.2f
+                                    ,57.2f,63.5f,69.8f,76.2f,88.9f,101.6f,114.3f,127f,139.7f,152.4f};
+    var diametrosTornilos = new Dictionary<string, string>{
+    {"1/2","12.70 mm (1/2 in)"},
+    {"5/8","15.87 mm (5/8 in)"},
+    {"3/4","19.05 mm (3/4 in)"},
+    {"7/8","22.22 mm (7/8 in)"},
+    {"1","25.40 mm (1 in)"},
+    {"1 1/8","28.57 mm (1 1/8 in)"},
+    {"1 1/4","31.75 mm (1 1/4 in)"},
+    {"1 3/8","34.92 mm (1 3/8 in)"},
+    {"1 1/2","38.10 mm (1 1/2 in)"}};
+
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 <!--Cuerpo-->
 <div class="row mt-1">
@@ -50,32 +66,130 @@
                         <div class="row">
                             <label class="col-md-3 col-form-label cols" for="fu-datos-diseño">Fu (Mpa)</label>
                             <div class="col-md-3 cols">
-                                <input id="fu-datos-diseño" type="text" class="form-control" onkeyup="validar()" />
+                                <input id="fu-datos-diseño" type="text" class="form-control" onkeyup="validar()" value="345" />
                             </div>
                             <label class="col-md-3 col-form-label cols" for="fy-datos-diseño">Fy (Mpa)</label>
                             <div class="col-md-3 cols">
-                                <input id="fy-datos-diseño" type="text" class="form-control" onkeyup="validar()" />
+                                <input id="fy-datos-diseño" type="text" class="form-control" onkeyup="validar()" value="250" />
                             </div>
                         </div>
                         <div id="fuerzasInput" style="display:none" class="mt-2">
                             <div class="row">
                                 <label class="col-md-3 cols col-form-label" for="fuerTen-datos-diseño">Fuerza tensión máx (kN)</label>
                                 <div class="col-md-3 cols">
-                                    <input id="fuerTen-datos-diseño" type="text" class="form-control" onkeyup="validar()" />
+                                    <input id="fuerTen-datos-diseño" type="text" class="form-control" onkeyup="validar()" value="81" />
                                 </div>
-                                <label class="col-md-3 cols" for="fuerComp-datos-diseño">Fuerza compresión máx.</label>
+
+                                <label class="col-md-3 cols col-form-label" for="fuerComp-datos-diseño">Fuerza compresión máx.</label>
                                 <div class="col-md-3 cols">
-                                    <input id="fuerComp-datos-diseño" type="text" class="form-control" onkeyup="validar()" />
+                                    <input id="fuerComp-datos-diseño" type="text" class="form-control" onkeyup="validar()" value="-80" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tornilloInput" style="display:none" class="mt-2">
+                            <div class="row">
+                                <label class="col-md-3 cols col-form-label" for="Nombre_tor">Diámetro del tornillo</label>
+                                <div class="col-md-3 cols">
+                                    <select class="custom-select" for="Nombre_tor" id="Nombre_tor">
+                                        @foreach (var i in diametrosTornilos)
+                                        {
+                                            <option value="@i.Key">@i.Value</option>
+                                        }
+                                    </select>
+                                </div>
+                                <label class="col-md-3 col-form-label cols" for="Gpo">Grupo</label>
+                                <div class="col-md-3 cols">
+                                    <select class="custom-select" for="Gpo" id="Gpo">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="A307">A307</option>
+                                    </select>
+                                </div>
+                                <label class="col-md-3 col-form-label cols mt-2" for="Rosca">Rosca</label>
+                                <div class="col-md-3 cols  mt-2">
+                                    <select class="custom-select" for="Rosca" id="Rosca">
+                                        <option value="Sí">Sí</option>
+                                        <option value="No">No</option>
+                                        <option value="N/A">N/A</option>
+                                    </select>
+                                </div>
+                                <label class="col-md-3 cols mt-2" for="conexion-datos-diseño">Tipo de conexión</label>
+                                <div class="col-md-3 cols  mt-2">
+                                    <select class="custom-select" for="conexion-datos-diseño" id="conexion-datos-diseño">
+                                        <option value="Simple">Simple</option>
+                                        <option value="Empalme">Empalme</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text  mt-2 ml-2">
-                                    <label class="col-form-label cols" for="mismasFuerzas">
+                            <div class="col-md-9 cols">
+                                <div class="row ml-1">
+                                    <input type="checkbox" id="mismasFuerzas" onclick="mostrarFuerzas(this)" class="">
+                                    <label class="col-form-label ml-2" for="mismasFuerzas">
                                         Utilizar las mismas fuerzas de Tensión y Compresión para todos los grupos
                                     </label>
-                                    <input type="checkbox" id="mismasFuerzas" onclick="mostrarFuerzas(this)">
+                                </div>
+                                <div class="row ml-1">
+                                    <input type="checkbox" id="mismoTornillo" onclick="mostrarTornillo(this)" class="">
+                                    <label class="col-form-label ml-2" for="mismoTornillo">
+                                        Utilizar el mismo tornillo para todos los grupos
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card mt-1">
+                                    <div class="card-body">
+                                        <!--Tabla, datos-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <button type="button" class="btn btn-secondary btn-block"
+                                                        data-toggle="collapse" href="#collapse_export_excel" role="button" aria-expanded="false" aria-controls="collapse_export_excel">
+                                                    Importar datos de Excel
+                                                </button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <a class="btn btn-success btn-block" href="#btnDisTornilleria">Diseñar tornillería</a>
+                                            </div>
+                                        </div>
+                                        <!--Datos desplegables-->
+                                        <div class="collapse datos_desplegables" id="collapse_export_excel">
+                                            <div class="card card-body">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        @Html.AntiForgeryToken()
+                                                        @using (Html.BeginForm("descargarPlantilla", "home", FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" value="@ViewData["_noPieza"]" name="noPieza" />
+                                                            <input type="submit" class="btn btn-outline-dark" value="Descargar plantilla" />
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <div class="input-group col-12">
+                                                            @Html.AntiForgeryToken()
+                                                            @using (Html.BeginForm("loadFile", "home", FormMethod.Post, new { enctype = "multipart/form-data", id="form"}))
+                                                            {
+                                                                @Html.AntiForgeryToken()
+                                                            
+                                                                    <div class="custom-file">
+                                                                        <input id="file-upload" onchange='cambiar()' type="file" name="file2" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                                                                        <label class="custom-file-label" for="file-upload" id="info">Importar datos desde Excel</label>
+                                                                    </div>
+                                                            }
+                                                            <div class="input-group-append">
+                                                                <input id="Submit1" type="submit" value="Importar" class="btn btn-outline-secondary" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -92,6 +206,12 @@
         <a href="~/Home/Index" class="btn btn-danger btn-block mt-lg-3">Regresar</a>
     </div>
 </div>
+<script>
+    function cambiar() {
+        var pdrs = document.getElementById('file-upload').files[0].name;
+        document.getElementById('info').innerHTML = pdrs;
+    }
+</script>
 <form method="POST" action="/Home/PlacaBase">
     <div id="tablaBoton">
         <div class="card text-white bg-dark mt-1 d-none d-md-none d-lg-block">
@@ -133,25 +253,28 @@
                 temp_perfil = grupo.NombrePerfil;
 
             }
-
+            <input type="hidden" id="Anv_@contador" value="0" />
+            <input type="hidden" id="Ant_@contador" value="0" />
+            <input type="hidden" id="Agv_@contador" value="0" />
             <div class="card mt-1">
                 <div class="card-body">
+                    <!--Tabla, datos-->
                     <div class="row">
                         <div class="col-md-1">
                             <span class="font-weight-bold d-block d-md-block d-lg-none">No. </span>@contador
                         </div>
                         <div class="col-md-1">
-                            <span class="font-weight-bold d-block d-md-block d-lg-none">Grupo </span>@grupo.NombreGrupo
+                            <span class="font-weight-bold d-block d-md-block d-lg-none">Grupo </span><div id="id_grupo_nombre_@contador">@grupo.NombreGrupo</div>
                         </div>
                         <div class="col-md-3">
-                            <span class="font-weight-bold d-block d-md-block d-lg-none">Ubicación </span>@grupo.Ubicacion
+                            <span class="font-weight-bold d-block d-md-block d-lg-none">Ubicación </span><div id="id_grupo_ubicacion_@contador">@grupo.Ubicacion</div>
                         </div>
                         <div class="col-md-1">
                             <span class="font-weight-bold d-block d-md-block d-lg-none">Perfil </span><span id="nombPerfil_@contador">@grupo.NombrePerfil</span>
                         </div>
                         <div class="col-md-1">
                             <span class="font-weight-bold d-block d-md-block d-lg-none">Espesor </span><span id="espPerfil_@contador">@grupo.EspesorPerfil.ToString("0.00")</span>
-</div>
+                        </div>
                         <div class="col-md-1">
                             <span class="font-weight-bold d-block d-md-block d-lg-none">Dimensión</span><span id="dimPerfil_@contador">@grupo.DimensionPerfil.ToString("0.00")</span>
                         </div>
@@ -160,10 +283,10 @@
                         </div>
                         <div class="col-md-2">
                             <div class="row">
-                                <div class="col-12 ">
-                                    <a class="btn btn-primary btn-block" data-toggle="collapse" href="#collapse_@contador" role="button" aria-expanded="false" aria-controls="collapse_@contador">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary btn-block btn_agregar_valores" data-toggle="collapse" href="#collapse_@contador" role="button" aria-expanded="false" aria-controls="collapse_@contador">
                                         Agregar valores
-                                    </a>
+                                    </button>
                                 </div>
                                 @{
                                     var temp = grupo.NombreGrupo.Split("_");
@@ -171,7 +294,10 @@
                                     {
                                         <!--Boton que activa el modal-->
                                         <div class="col-12 mt-2">
-                                            <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#exampleModal" onclick="llenarModal('@grupo.NombreGrupo',@contador,@grupo.IdPerfil, '@grupo.NombrePerfil')">
+                                            <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#exampleModal"
+                                                    onclick="llenarModal('@grupo.NombreGrupo',@contador,@grupo.IdPerfil, '@grupo.NombrePerfil')"
+                                                    disabled
+                                                    id="btn_trabe_columna_@contador">
                                                 Trabe-Columna
                                             </button>
                                         </div>
@@ -180,7 +306,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="collapse" id="collapse_@contador">
+                    <!--Datos desplegables-->
+                    <div class="collapse datos_desplegables" id="collapse_@contador">
                         <div class="card card-body">
                             <div class="row">
                                 <label class="col-md-2 cols col-form-label fuerzas" for="fuerTen-datos-diseño_@contador">Fuerza tensión máx (kN)</label>
@@ -191,23 +318,17 @@
                                 <div class="col-md-2 cols fuerzas">
                                     <input id="fuerComp-datos-diseño_@contador" type="text" class="form-control" value="0" />
                                 </div>
-                                <label class="col-md-2 cols col-form-label" for="Nombre_tor_@contador">Diámetro del tornillo</label>
-                                <div class="col-md-2 cols">
+                                <label class="col-md-2 cols col-form-label tornillos" for="Nombre_tor_@contador">Diámetro del tornillo</label>
+                                <div class="col-md-2 cols tornillos">
                                     <select class="custom-select" for="Nombre_tor_@contador" id="Nombre_tor_@contador">
-
-                                        <option value="1/2"> 12.70 mm (1/2 in)</option>     // 1/2
-                                        <option value="5/8"> 15.87 mm (5/8 in)</option>       // 5 /8
-                                        <option value="3/4"> 19.05 mm (3/4 in)</option>        // 3/4
-                                        <option value="7/8"> 22.22 mm (7/8 in)</option>       // 7/8
-                                        <option value="1"> 25.40 mm (1 in)</option>     // 1"
-                                        <option value="1 1/8"> 28.57 mm (1 1/8 in)</option>       // 1" 1/8
-                                        <option value="1 1/4"> 31.75 mm (1 1/4 in)</option>        // 1" 1/4
-                                        <option value="1 3/8"> 34.92 mm (1 3/8 in)</option>       // 1" 3/8
-                                        <option value="1 1/2"> 38.10 mm (1 1/2 in)</option>     // 1" 1/2
+                                        @foreach (var i in diametrosTornilos)
+                                        {
+                                            <option value="@i.Key">@i.Value</option>
+                                        }
                                     </select>
                                 </div>
-                                <label class="col-md-2 col-form-label cols" for="Gpo_@contador">Grupo</label>
-                                <div class="col-md-2 cols">
+                                <label class="col-md-2 col-form-label cols tornillos" for="Gpo_@contador">Grupo</label>
+                                <div class="col-md-2 cols tornillos">
                                     <select class="custom-select" for="Gpo_@contador" id="Gpo_@contador">
                                         <option value="A">A</option>
                                         <option value="B">B</option>
@@ -216,16 +337,16 @@
 
                                     </select>
                                 </div>
-                                <label class="col-md-2 col-form-label cols" for="Rosca_@contador">Rosca</label>
-                                <div class="col-md-2 cols">
+                                <label class="col-md-2 col-form-label cols tornillos" for="Rosca_@contador">Rosca</label>
+                                <div class="col-md-2 cols tornillos">
                                     <select class="custom-select" for="Rosca_@contador" id="Rosca_@contador">
                                         <option value="Sí">Sí</option>
                                         <option value="No">No</option>
                                         <option value="N/A">N/A</option>
                                     </select>
                                 </div>
-                                <label class="col-md-2 cols" for="conexion-datos-diseño_@contador">Tipo de conexión</label>
-                                <div class="col-md-2 cols">
+                                <label class="col-md-2 cols tornillos" for="conexion-datos-diseño_@contador">Tipo de conexión</label>
+                                <div class="col-md-2 cols tornillos">
                                     <select class="custom-select" for="conexion-datos-diseño_@contador" id="conexion-datos-diseño_@contador">
                                         <option value="Simple">Simple</option>
                                         <option value="Empalme">Empalme</option>
@@ -236,12 +357,13 @@
                     </div>
                 </div>
             </div>
-                                        contador++;
-                                    }
+            contador++;
+        }
         <input type="hidden" name="piezaElemento" value="@temp_piezaElemento" />
         <input type="hidden" name="grupo" value="@temp_grupo" />
         <input type="hidden" name="perfil" value="@temp_perfil" />
         <input type="hidden" name="nombrePiezaMarco" value="@ViewData["_nombrePiezaMarco"]" />
+        <input type="hidden" name="datosJSON" value="" id="datosJSON" />
         <!--Boton Diseñar tornilleria-->
         <div class="row">
             <div class="col-12 ">
@@ -299,16 +421,10 @@
                         <label class="col-md-2 col-form-label cols" for="tor_diametro">Diametro (mm)</label>
                         <div class="col-md-4 cols">
                             <select class="custom-select" for="tor_diametro" id="tor_diametro">
-
-                                <option value="12.7"> 12.70 mm (1/2 in)</option>   
-                                <option value="15.875"> 15.87 mm (5/8 in)</option>     
-                                <option value="19.05"> 19.05 mm (3/4 in)</option>      
-                                <option value="22.225"> 22.22 mm (7/8 in)</option>     
-                                <option value="25.4"> 25.40 mm (1 in)</option>
-                                <option value="28.575"> 28.57 mm (1 1/8 in)</option>       
-                                <option value="31.75"> 31.75 mm (1 1/4 in)</option>        
-                                <option value="34.925"> 34.92 mm (1 3/8 in)</option>       
-                                <option value="38.1"> 38.10 mm (1 1/2 in)</option>     
+                                @foreach (var i in diametrosTornilos)
+                                {
+                                    <option value="@i.Key">@i.Value</option>
+                                }
                             </select>
                         </div>
 
@@ -334,7 +450,13 @@
                         </div>
                         <label class="col-md-2 col-form-label cols" for="dim_pla_espesor">Espesor (mm)</label>
                         <div class="col-md-4 cols">
-                            <input id="dim_pla_espesor" type="text" class="form-control" />
+                            <select id="dim_pla_espesor" class="form-control">
+                                @foreach (float i in dimensionesPlacas)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                            <!--<input id="dim_pla_espesor" type="text" class="form-control" />-->
                         </div>
                     </div>
                     <h5 class="text-center">
@@ -405,17 +527,18 @@
     </div>
 </div>
 <script>
+    var mismoTornillo = false;
     var mismasFuerzas = false;
         window.onload = function () {
             //Cuando se carge la pagina
             //Borrar datos introducidos por el usuario
-            document.getElementById("fuerTen-datos-diseño").value="";
+            /*document.getElementById("fuerTen-datos-diseño").value="";
             document.getElementById("fuerComp-datos-diseño").value="";
             document.getElementById("fu-datos-diseño").value="";
-            document.getElementById("fy-datos-diseño").value = "";
+            document.getElementById("fy-datos-diseño").value = "";*/
         }
 
-        function validar() {
+    function validar() {
             var fuerTensMax = document.getElementById("fuerTen-datos-diseño");
             var fuerCompMax = document.getElementById("fuerComp-datos-diseño");
             var Fu = document.getElementById("fu-datos-diseño");
@@ -438,7 +561,15 @@
                 }
             }
 
+    }
+    function ocultarBotones() {
+
+        var boton = document.getElementsByClassName("btn_agregar_valores");
+
+        for (var i = 0; i < boton.length; i++) {
+            boton[i].disabled = mismoTornillo && mismasFuerzas;
         }
+    }
 
     function validaDatosCompletos(num) {
         if (mismasFuerzas) {//Si se ocuparan las mismas fuerzas, no validar Fuerzas individuales
@@ -455,7 +586,38 @@
             }
         }
     }
-
+    function getDiametroTornillo(num) {
+        if (mismoTornillo) {
+            return document.getElementById("Nombre_tor").value
+        }
+        else {
+            return document.getElementById("Nombre_tor_" + num).value
+        }
+    }
+    function getGrupoTornillo(num) {
+        if (mismoTornillo) {
+            return document.getElementById("Gpo").value
+        }
+        else {
+            return document.getElementById("Gpo_" + num).value
+        }
+    }
+    function getRoscaTornillo(num) {
+        if (mismoTornillo) {
+            return document.getElementById("Rosca").value
+        }
+        else {
+            return document.getElementById("Rosca_" + num).value
+        }
+    }
+    function getConexionTornillo(num) {
+        if (mismoTornillo) {
+            return document.getElementById("conexion-datos-diseño").value
+        }
+        else {
+            return document.getElementById("conexion-datos-diseño_" + num).value
+        }
+    }
     function getTension(num) {
         if (mismasFuerzas) {
             return document.getElementById("fuerTen-datos-diseño").value
@@ -473,19 +635,19 @@
                 return document.getElementById("fuerComp-datos-diseño_" + num).value
             }
     }
+    var objTempJson;
+        //Direccion de la API+
+    const url = '/api/';
 
-        //Direccion de la API
-        //const url = 'http://hugoblancas-001-site1.ctempurl.com/api/';
-    const url = 'https://localhost:44343/api/';
+    const urlTornillos = url +'Tornilleria/';
+    //const urlTornillos = '/Tornillos/CalcularTornillos/';
 
-    const urlTornillos = url +'CalculoTornilleria/';
-
-        //Obtener informacion del marco
-        function calcularTornillos() {
-            console.log(document.getElementById("fuerTen-datos-diseño").value)
+        //Calcular tornillos
+    function calcularTornillos() {
+            //Definicion de JSON de consulta
             let JSONconsulta = {
-                "Fu": parseInt(document.getElementById("fu-datos-diseño").value),
                 "Fy": parseInt(document.getElementById("fy-datos-diseño").value),
+                "Fu": parseInt(document.getElementById("fu-datos-diseño").value),
                 "Ubs": 0.5,
                 "ElementoTornillerias": [
                     @foreach (var (item, index) in listaGrupos.Select((value, i) => (value, i)))
@@ -503,15 +665,20 @@
                         },
                         "Tornillo":
                         {
-                            "Plg": document.getElementById("Nombre_tor_@cont").value,
-                            "Grupo": document.getElementById("Gpo_@cont").value,
-                            "Rosca": document.getElementById("Rosca_@cont").value,
-                            "TipoConexion": document.getElementById("conexion-datos-diseño_@cont").value
+                            "Plg": getDiametroTornillo(@cont),
+                            "Grupo": getGrupoTornillo(@cont),
+                            "Rosca": getRoscaTornillo(@cont),
+                            "TipoConexion": getConexionTornillo(@cont)
                         },
                         "Fuerzas":
                         {
                             "Tension": parseFloat(getTension(@cont)),
                             "Compresion": parseFloat(getCompresion(@cont))
+                        },
+                        "Grupo":
+                        {
+                            "Nombre": "@item.NombreGrupo",
+                            "Ubicacion": "@item.Ubicacion"
                         }
                         },
                         </text>
@@ -520,7 +687,6 @@
                 ]
             }
 
-            console.log(JSONconsulta);
             //Consumir API
             fetch(`${urlTornillos}`, {
                 method: 'POST',
@@ -531,19 +697,28 @@
             })
                 .then(response => response.json())
                 .then(json => {
-
+                    //Guardar los valores de respuesta en un input para despues exportarlo
+                    document.getElementById("datosJSON").value = JSON.stringify(json);
                     habilitarBtnCaluculoTornilleria = true;
                     //Mostrar la tabla
                     document.getElementById("tablaBoton").style.display = "block";
                     //Enfocar la tabla
                     window.location.hash = "tablaBoton";
-                    //console.log(json);
+                    //Convertir el resultado en JSON
                     var cont = 1;
-                    console.log(json)
-                    console.log(json.elementoTornillerias)
-                    for (temp of json.elementoTornillerias) {
+                    for (temp of json.ElementoTornillerias) {
                         if (temp != null) {
-                            document.getElementById("tornillo_" + cont).innerHTML = temp.nTot/*.toFixed(3)*/;
+                            console.log(cont)
+                            document.getElementById("tornillo_" + cont).innerHTML = temp.NTot;
+
+                            document.getElementById("Anv_" + cont).value = temp.Anv;
+                            document.getElementById("Ant_" + cont).value = temp.Ant;
+                            document.getElementById("Agv_" + cont).value = temp.Agv;
+                            //Habilitar btn Trabe-Columna
+                            var boton = document.getElementById("btn_trabe_columna_" + cont)
+                            if (boton != null) {
+                                boton.disabled = false;
+                            }
                         }
                         cont++;
                     }
@@ -553,27 +728,31 @@
                 .catch(err => {
                     console.log(err)
                 })
-        }
+    }
 
     function llenarModal(grupo,numGrupo,idPerfil,nombrePerfil) {
         document.getElementById("nombreGrupo").innerHTML = grupo;
         document.getElementById("numeroGrupo").value = numGrupo;
         document.getElementById("numeroPerfil").value = idPerfil;
         document.getElementById("nombrePerfil").value = nombrePerfil;
+        document.getElementById("fuer_compresion").value = getCompresion(numGrupo);
+        document.getElementById("fuer_tension").value = getTension(numGrupo);
     }
 
     function calcularTrabeColumna() {
-
+        var cont = parseInt(document.getElementById("numeroGrupo").value);
+        console.log("el contador es: " + cont)
+        console.log("El Anv es " + parseFloat(document.getElementById("Anv_" + cont)))
         var jsonDatos =
         {
             "perfil": {
-                "IdTipo": 1,//no se ocupa
-                "NombrePieza": "Columna 1",//no se ocupa
+                "IdTipo": 1,
+                "NombrePieza": "Columna 1",
                 "IdGrupo": parseInt(document.getElementById("numeroGrupo").value, 10),
-                "Nombre": "_C_S2 ",//No se ocupa
+                "Nombre": "_C_S2 ",
                 "IdPerfil": parseInt(document.getElementById("numeroPerfil").value, 10),
                 "PerfilS": document.getElementById("nombrePerfil").value,
-                "Localizacion": "Cuerdas cuerpo recto, cara X y Z",//No se ocupa
+                "Localizacion": "Cuerdas cuerpo recto, cara X y Z",
                 "fu": parseFloat(document.getElementById("fu-datos-diseño").value) * 10.1972,
                 "fy": parseFloat(document.getElementById("fy-datos-diseño").value) * 10.1972
             },
@@ -582,10 +761,7 @@
                 "compresion": parseFloat(document.getElementById("fuer_compresion").value)
             },
             "tornillo": {
-                "diametro": parseFloat(document.getElementById("tor_diametro").value)/*,
-                "grupo": "B",//No se ocupa
-                "rosca": "No",//No se ocupa
-                "area": 197.93//No se ocupa*/
+                "diametro": parseFloat(document.getElementById("tor_diametro").value)
             }
             ,
             "dimensionesPlaca": {
@@ -597,13 +773,15 @@
             "noTornillos": parseInt(document.getElementById("tornillo_" + (parseInt(document.getElementById("numeroGrupo").value, 10))).innerHTML, 10),
             "BloqueDeCortante": {
                 "Ubs": 1,
-                "_Anv": 152.27,
-                "_Ant": 130.46,
-                "_Agv": 256.23
+                "_Anv": parseFloat(document.getElementById("Anv_" + cont).value),
+                "_Ant": parseFloat(document.getElementById("Ant_" + cont).value),
+                "_Agv": parseFloat(document.getElementById("Agv_" + cont).value)
             }
 
         };
-        var urlTrabeColumna = url+'TrabeColumna/';
+        console.log(jsonDatos)
+        var urlTrabeColumna = url + 'TrabeColumna/';
+        console.log(urlTrabeColumna)
         fetch(`${urlTrabeColumna}`, {
             method: 'POST',
             body: JSON.stringify(jsonDatos),
@@ -638,12 +816,13 @@
     //Variable bandera, para saber si se ocuparan las mismas fuerzas o no
 
     function mostrarFuerzas(checkbox) {
+        //ocultarBotones()
         if (checkbox.checked) {
             document.getElementById("fuerzasInput").style.display = "block";
             mismasFuerzas = true;
             //Ocultar inputs de fuerzas
             var fuerzas = document.getElementsByClassName("fuerzas");
-            for (var i = 0; fuerzas.length; i++) {
+            for (var i = 0; i<fuerzas.length; i++) {
                 fuerzas[i].style.display = "none";
             }
         }
@@ -653,11 +832,84 @@
             document.getElementById("fuerzasInput").style.display = "none";
             //Mostrar inputs de fuerzas
             var fuerzas = document.getElementsByClassName("fuerzas");
-            for (var i = 0; fuerzas.length; i++) {
+            for (var i = 0; i<fuerzas.length; i++) {
                 fuerzas[i].style.display = "block";
             }
         }
-        validar()
+        ocultarBotones()
     }
 
+    function mostrarTornillo(checkbox) {
+        if (checkbox.checked) {
+            document.getElementById("tornilloInput").style.display = "block";
+            mismoTornillo = true;
+            //Ocultar inputs de fuerzas
+            var fuerzas = document.getElementsByClassName("tornillos");
+            for (var i = 0; i<fuerzas.length; i++) {
+                fuerzas[i].style.display = "none";
+            }
+        }
+        else {
+
+            mismoTornillo = false;
+            document.getElementById("tornilloInput").style.display = "none";
+            //Mostrar inputs de fuerzas
+            var fuerzas = document.getElementsByClassName("tornillos");
+            for (var i = 0; i<fuerzas.length; i++) {
+                fuerzas[i].style.display = "block";
+            }
+        }
+        ocultarBotones()
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#Submit1').click(function () {
+            //Definir una variable, con el formulario que contiene el archivo
+            var formData = new FormData($('#form')[0]);
+            //Mandar a llamar al metodo loadFile del controlador HomeController
+            $.ajax({
+                url: "/Home/loadFile",
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,//Enviar el formulario como datos
+                success: function (data) {
+                    //Cuando se ejecute correctamente
+                    //COnvertir el resultado en un JSON
+                    var json = JSON.parse(data)
+                    //Guardar los datos de resultado en un input para despues exportarlos
+                    document.getElementById("datosJSON").value = JSON.stringify(json);
+                    //Habilitar el boton de calculo de tornilleria
+                    habilitarBtnCaluculoTornilleria = true;
+                    //Mostrar la tabla
+                    document.getElementById("tablaBoton").style.display = "block";
+                    //Enfocar la tabla
+                    window.location.hash = "tablaBoton";
+                    //Recorrer el JSON
+                    var cont = 1;
+                    for (temp of json.ElementoTornillerias) {
+                        if (temp != null) {
+                            //Mostrar el numero de tornillos
+                            document.getElementById("tornillo_" + cont).innerHTML = temp.NTot;
+                            //Guardar algunos valores en inputs
+                            document.getElementById("Anv_" + cont).value = temp.Anv;
+                            document.getElementById("Ant_" + cont).value = temp.Ant;
+                            document.getElementById("Agv_" + cont).value = temp.Agv;
+                            //Habilitar boton Trabe-Columna
+                            var boton = document.getElementById("btn_trabe_columna_" + cont)
+                            if (boton != null) {
+                                boton.disabled = false;
+                            }
+                        }
+                        cont++;
+                    }
+                },
+                error: function (data) {
+                    // Si hay un error
+                    console.log(data)
+                }
+            });
+        });
+    });
 </script>

@@ -1,13 +1,24 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿
+
+using ClosedXML.Excel;
+using ExcelDataReader;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using OfficeOpenXml;
+using SpreadsheetLight;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 using WebApplication1.Models;
+using WebApplication1.Models.Tornilleria;
 
 namespace WebApplication1.Controllers
 {
@@ -22,7 +33,7 @@ namespace WebApplication1.Controllers
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
         }
-
+       
         public IActionResult Index()
         {
             QuerysToBD _ListaConsultaBD = new QuerysToBD();
@@ -32,7 +43,6 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult CalculoTornilleria()
         {
-
             return View();
         }
 
@@ -43,7 +53,6 @@ namespace WebApplication1.Controllers
             string _subestacion = formCollection["subestacion"];
             ViewData["_subestacion"] = _subestacion;
 
-
             string _marco = formCollection["marco"];
             ViewData["_marco"] = _marco;
 
@@ -51,72 +60,22 @@ namespace WebApplication1.Controllers
             ViewData["_noPieza"] = _noPieza;
 
             string _datoElemento = formCollection["datoElemento"];
-            ViewData["_datoElemento"] = _datoElemento;
+            ViewData["_datoElemento"] = _datoElemento;//Columna -ejemplo
 
             string _datoTipo = formCollection["datoTipo"];
-            ViewData["_datoTipo"] = _datoTipo;
+            ViewData["_datoTipo"] = _datoTipo;//num de columna
 
-            string _nombrePiezaMarco = formCollection["nombrePiezaMarco"];
-            if(_nombrePiezaMarco.ElementAt(0)=='c')
+            string _nombrePiezaMarco; 
+            if (_datoElemento.ElementAt(0) == 'c')
             {
-                _nombrePiezaMarco = "Columna " + _nombrePiezaMarco.ElementAt(1);
+                _nombrePiezaMarco = "Columna " + _datoTipo;
             }
             else
             {
-                _nombrePiezaMarco = "Trabe " + _nombrePiezaMarco.ElementAt(1);
+                _nombrePiezaMarco = "Trabe " + _datoTipo;
             }
             ViewData["_nombrePiezaMarco"] = _nombrePiezaMarco;
 
-
-            //Declarar variables (?
-            //double[,] ListaScrews = new double[10, 3];
-            //string[,] ListaGpos = new string[35, 3];
-            //int NGpo;
-
-            // Tabla de tornillos
-           /* ListaScrews[1, 1] = 12.7; ListaScrews[1, 2] = 19.05;          // 1/2
-            ListaScrews[2, 1] = 15.875; ListaScrews[2, 2] = 22.225;       // 5 /8
-            ListaScrews[3, 1] = 19.05; ListaScrews[3, 2] = 25.4;          // 3/4
-            ListaScrews[4, 1] = 22.225; ListaScrews[4, 2] = 28.575;       // 7/8
-            ListaScrews[5, 1] = 25.4; ListaScrews[5, 2] = 31.75;          // 1"
-            ListaScrews[6, 1] = 28.575; ListaScrews[6, 2] = 38.1;         // 1" 1/8
-            ListaScrews[7, 1] = 31.75; ListaScrews[7, 2] = 41.275;        // 1" 1/4
-            ListaScrews[8, 1] = 34.925; ListaScrews[8, 2] = 43.65625;     // 1" 3/8
-            ListaScrews[9, 1] = 38.1; ListaScrews[9, 2] = 47.625;        // 1" 1/2*/
-
-            // Tabla Gpos
-            /*ListaGpos[1, 1] = "_C_S1"; ListaGpos[1, 2] = "Cuerdas cuerpo piramidal, cara X y Z";
-            ListaGpos[2, 1] = "_C_S2"; ListaGpos[2, 2] = "Cuerdas cuerpo recto, cara X y Z";
-            ListaGpos[3, 1] = "_C_S3"; ListaGpos[3, 2] = "Cuerdas extensión, cara X y Z";
-            ListaGpos[4, 1] = "_D_S1_X"; ListaGpos[4, 2] = "Diagonales cuerpo piramidal cara X";
-            ListaGpos[5, 1] = "_D_S1_Z"; ListaGpos[5, 2] = "Diagonales cuerpo piramidal cara Z";
-            ListaGpos[6, 1] = "_D_S2_X"; ListaGpos[6, 2] = "Diagonales soporte y cuerpo recto, cara X";
-            ListaGpos[7, 1] = "_D_S2_Z"; ListaGpos[7, 2] = "Diagonales soporte y cuerpo recto, cara Z";
-            ListaGpos[8, 1] = "_D_S3_X"; ListaGpos[8, 2] = "Diagonales unión trabe de remate, cara X";
-            ListaGpos[9, 1] = "_D_S3_Z"; ListaGpos[9, 2] = "Diagonales unión trabe de remate, cara Z";
-            ListaGpos[10, 1] = "_D_S4_X"; ListaGpos[10, 2] = "Diagonales unión trabe superior, cara X";
-            ListaGpos[11, 1] = "_D_S4_Z"; ListaGpos[11, 2] = "Diagonales unión trabe de suspensión, cara Z";
-            ListaGpos[12, 1] = "_D_S5_X"; ListaGpos[12, 2] = "Diagonales unión trabe superior, cara X";
-            ListaGpos[13, 1] = "_D_S5_Z"; ListaGpos[13, 2] = "Diagonales unión trabe superior, cara Z";
-            ListaGpos[14, 1] = "_D_S6"; ListaGpos[14, 2] = "Diagonales extensión, cara X y Z";
-            ListaGpos[15, 1] = "_P_S1"; ListaGpos[15, 2] = "Panel (rombo) soporte y trabe de remate, cara X y Z";
-            ListaGpos[16, 1] = "_P_S2"; ListaGpos[16, 2] = "Panel (rombo) trabe de suspensión, cara X y Z";
-            ListaGpos[17, 1] = "_P_S3"; ListaGpos[17, 2] = "Panel (rombo) trabe superior, cara X y Z";
-            ListaGpos[18, 1] = "_T_S1"; ListaGpos[18, 2] = "Transversales soporte y trabe de remate, cara X y Z";
-            ListaGpos[19, 1] = "_T_S2"; ListaGpos[19, 2] = "Transversales trabe de suspensión, cara X y Z";
-            ListaGpos[20, 1] = "_T_S3"; ListaGpos[20, 2] = "Transversales trabe superiror, cara X y Z";
-            ListaGpos[21, 1] = "_T_S4"; ListaGpos[21, 2] = "Transversales capitel, cara X y Z";*/
-
-            //Agregar al listBox los valores de ListaScrews
-            //Enviar el ListaScrews a la vista
-            //ViewData["_ListaScrews"] = ListaScrews;//No se ocupa ya que se llenno a mano
-
-            //Visualizar los valores
-            //Subestacion
-            //MArco
-            //Pieza
-            //Elemento (abajo)
-            //Tipo
 
             //NGpo = 0;
             if (_datoElemento == "trabe")
@@ -172,12 +131,261 @@ namespace WebApplication1.Controllers
             return CalculoTornilleria();
         }
 
+        public IActionResult DescargarPlantilla(IFormCollection formCollection)
+        {
+            string noPieza = formCollection["noPieza"];
+            if (noPieza==null | noPieza.Equals(""))
+            {
+                return NotFound();
+            }
+            //Obtener los datos de Grupo y Perfil
+            QuerysToBD _ConsultaGpos = new QuerysToBD();
+            List<GrupoPerfil> gruposPerfiles = _ConsultaGpos.ConsultaGrupoPerfil(noPieza, _hostingEnvironment.WebRootPath);
 
+            //Leer archivo Excel
+            var file = "DatosEntrada.xlsx";
+            string filename = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files\plantillas"}" + "\\" + file;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var libros = new XLWorkbook(filename))
+            {
+
+                //Obtener la hoja
+                var hoja = libros.Worksheet(1);
+                //Realizar los cambios
+                int cont = 5;
+                foreach (GrupoPerfil grupoPerfil in gruposPerfiles)
+                {
+                    //Perfil nombre
+                    hoja.Cell("A" + cont).SetValue(grupoPerfil.NombrePerfil);
+                    //Perfil Espesor
+                    hoja.Cell("B" + cont).SetValue(grupoPerfil.EspesorPerfil);
+                    //Perfil Dimension
+                    hoja.Cell("C" + cont).SetValue(grupoPerfil.DimensionPerfil);
+                    //Grupo Nombre
+                    hoja.Cell("J" + cont).SetValue(grupoPerfil.NombreGrupo);
+                    //Grupo Ubicación
+                    hoja.Cell("K" + cont).SetValue(grupoPerfil.Ubicacion);
+
+                    cont++;
+                }
+
+                using (var memori = new MemoryStream())
+                {
+                    libros.SaveAs(memori);
+                    var nombreExcel = string.Concat("plantilla", ".xlsx");
+
+                    return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                }
+            }
+        }
+        [HttpPost]
+        public virtual ActionResult Test(IFormFile file2)
+        {
+            // to do :Look through productImg and do something  
+            return Ok(1);
+        }
+        [HttpPost]
+        public IActionResult loadFile(IFormFile file2, [FromServices] IWebHostEnvironment he)
+        {
+            List<ElementoTornilleria> lista = new List<ElementoTornilleria>();
+            string filename = $"{he.WebRootPath}\\files\\{file2.FileName}";
+            // lo que esta entre diagonales invertidas "files", es el nombre de la carpeta que esta por default o puedes
+            // crear una nueva para que esa que crees la sustituyes por ese nombre.
+            var name = file2.FileName;
+            using (FileStream filestream = System.IO.File.Create(filename))
+            {
+                file2.CopyTo(filestream);
+                filestream.Flush();
+            }
+            // en este using hace que se guarde el archivo
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            var filename2 = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files"}" + "\\" + name;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            SLDocument sl = new SLDocument(filename2);
+            double Fy;
+            double Fu;
+            double Ubs;
+            using (var stream = System.IO.File.Open(filename2, FileMode.Open, FileAccess.Read))
+            {
+                using var reader = ExcelReaderFactory.CreateReader(stream);
+                var result = reader.AsDataSet();
+                DataTable table = result.Tables[0];
+                DataRow row = table.Rows[0];
+                var rt = table.Columns.Count;
+                var ft = table.Rows.Count;
+                var temp = sl.GetCellValueAsString(6, 4);
+                //Variable para obtener valores de los tornillos
+                Tornillos tornillos = new Tornillos();
+
+                //Leer archivo
+                //Obtener Fy, Fu, Ubs
+                Fy = sl.GetCellValueAsDouble(2, 1);
+                Fu = sl.GetCellValueAsDouble(2, 2);
+                Ubs = sl.GetCellValueAsDouble(2, 3);
+                //Leer los grupos y perfiles
+                for (int cont = 5; cont <= ft; cont++)
+                {
+                    try
+                    {
+                        //Obtener datos
+                        //Perfil
+                        String nombrePerfil = sl.GetCellValueAsString(cont, 1);
+                        double espesorPerfil = sl.GetCellValueAsDouble(cont, 2);
+                        double dimensionPerfil = sl.GetCellValueAsDouble(cont, 3);
+                        //Tornillo
+                        String plgTornillo = sl.GetCellValueAsString(cont, 4);
+                        String grupoTornillo = sl.GetCellValueAsString(cont, 5);
+                        String roscaTornillo = sl.GetCellValueAsString(cont, 6);
+                        String conexionTornillo = sl.GetCellValueAsString(cont, 7);
+                        //Fuerzas
+                        double tension = sl.GetCellValueAsDouble(cont, 8);
+                        double compresion = sl.GetCellValueAsDouble(cont, 9);
+                        //Grupo
+                        string nombreGrupo = sl.GetCellValueAsString(cont, 10);
+                        string ubicacion = sl.GetCellValueAsString(cont, 11);
+
+
+                        ElementoTornilleria elementoTemp = new ElementoTornilleria();
+                        //Llenar datos de elementoTemp
+                        //Grupo
+                        elementoTemp.Grupo = new Grupo();
+                        elementoTemp.Grupo.Nombre = nombreGrupo;
+                        elementoTemp.Grupo.Ubicacion = ubicacion;
+                        //
+                        elementoTemp.Perfil = new Models.Tornilleria.Perfil();
+                        elementoTemp.Perfil.NombrePerfil = nombrePerfil;
+                        elementoTemp.Perfil.Espesor = espesorPerfil;
+                        elementoTemp.Perfil.Dimension = dimensionPerfil;
+                        //Tornillo
+                        elementoTemp.Tornillo = new Tornillo();
+                        elementoTemp.Tornillo.Plg = plgTornillo;
+                        elementoTemp.Tornillo.Mm = tornillos.Dictionary[plgTornillo].Mm; 
+                        elementoTemp.Tornillo.Grupo = grupoTornillo;
+                        elementoTemp.Tornillo.Rosca = roscaTornillo;
+                        elementoTemp.Tornillo.TipoConexion = conexionTornillo;
+                        elementoTemp.Tornillo.Dmin = tornillos.Dictionary[plgTornillo].Dmin;
+                        //Fuerzas
+                        elementoTemp.Fuerzas = new Fuerzas();
+                        elementoTemp.Fuerzas.Tension = tension;
+                        elementoTemp.Fuerzas.Compresion = compresion;
+                        //Agregarle el numero "consecutivo de contador" Ejemplo 1,2,3,4...
+                        elementoTemp.Numero = cont - 2;
+                        //RevisionResistenciaCortante
+                        elementoTemp.RevisionResistenciaCortante = new RevisionResistenciaCortante();
+                        elementoTemp.RevisionResistenciaCortante._grupoTornillo = grupoTornillo;
+                        elementoTemp.RevisionResistenciaCortante._roscaTornillo = roscaTornillo;
+                        elementoTemp.RevisionResistenciaCortante._tipoConexion = conexionTornillo;
+                        elementoTemp.RevisionResistenciaCortante._mmTornillo = elementoTemp.Tornillo.Mm;//datosEntrada.ElementoTornillerias[i].Tornillo.Mm;
+                        elementoTemp.RevisionResistenciaCortante._tension = tension;//datosEntrada.ElementoTornillerias[i].Fuerzas.Tension;
+                        elementoTemp.RevisionResistenciaCortante._compresion = compresion; //datosEntrada.ElementoTornillerias[i].Fuerzas.Compresion;
+                                                                                           //RevisionAplastamiento
+                        elementoTemp.RevisionAplastamiento = new RevisionAplastamiento();
+                        elementoTemp.RevisionAplastamiento._diametroTornillo = elementoTemp.Tornillo.Mm;//datosEntrada.ElementoTornillerias[i].Tornillo.Mm;
+                        elementoTemp.RevisionAplastamiento._tipoConexion = conexionTornillo;//datosEntrada.ElementoTornillerias[i].Tornillo.TipoConexion;
+                        elementoTemp.RevisionAplastamiento._espesorPerfil = espesorPerfil;//datosEntrada.ElementoTornillerias[i].Perfil.Espesor;
+                        elementoTemp.RevisionAplastamiento._fu = Fu;//datosEntrada.Fu;
+                        elementoTemp.RevisionAplastamiento._compresion = compresion;//datosEntrada.ElementoTornillerias[i].Fuerzas.Compresion;
+                        elementoTemp.RevisionAplastamiento._tension = tension;//datosEntrada.ElementoTornillerias[i].Fuerzas.Tension;
+                                                                              //RevisionResistenciaDesgarre
+                        elementoTemp.RevisionResistenciaDesgarre = new RevisionResistenciaDesgarre();
+                        elementoTemp.RevisionResistenciaDesgarre._diametroTornillo = elementoTemp.Tornillo.Mm;//datosEntrada.ElementoTornillerias[i].Tornillo.Mm;
+                        elementoTemp.RevisionResistenciaDesgarre.Dmin = elementoTemp.Tornillo.Dmin;
+                        elementoTemp.RevisionResistenciaDesgarre._espesorPerfil = espesorPerfil;//datosEntrada.ElementoTornillerias[i].Perfil.Espesor;
+                        elementoTemp.RevisionResistenciaDesgarre._fu = Fu;//datosEntrada.Fu;
+                        elementoTemp.RevisionResistenciaDesgarre._tipoConexion = conexionTornillo;//datosEntrada.ElementoTornillerias[i].Tornillo.TipoConexion;
+                        elementoTemp.RevisionResistenciaDesgarre._tension = tension;//datosEntrada.ElementoTornillerias[i].Fuerzas.Tension;
+                                                                                    //RevisionResistenciaBloqueCortante
+                        elementoTemp.RevisionResistenciaBloqueCortante = new RevisionResistenciaBloqueCortante();
+                        elementoTemp.RevisionResistenciaBloqueCortante._lc1 = elementoTemp.RevisionResistenciaDesgarre.Lc1;
+                        elementoTemp.RevisionResistenciaBloqueCortante._lc2 = elementoTemp.RevisionResistenciaDesgarre.Lc2;
+                        elementoTemp.RevisionResistenciaBloqueCortante._espesorPerfil = espesorPerfil;//datosEntrada.ElementoTornillerias[i].Perfil.Espesor;
+                        elementoTemp.RevisionResistenciaBloqueCortante._dimPerfil = dimensionPerfil;//datosEntrada.ElementoTornillerias[i].Perfil.Dimension;
+                        elementoTemp.RevisionResistenciaBloqueCortante._gramilPerfil = elementoTemp.Perfil.Gramil;
+                        elementoTemp.RevisionResistenciaBloqueCortante._tipoConexion = conexionTornillo;//datosEntrada.ElementoTornillerias[i].Tornillo.TipoConexion;
+                        elementoTemp.RevisionResistenciaBloqueCortante._tension = tension;//datosEntrada.ElementoTornillerias[i].Fuerzas.Tension;
+                        elementoTemp.RevisionResistenciaBloqueCortante._compresion = compresion;//datosEntrada.ElementoTornillerias[i].Fuerzas.Compresion;
+                        elementoTemp.RevisionResistenciaBloqueCortante._daRevisionResistenciaDesgarre = elementoTemp.RevisionResistenciaDesgarre.Da;
+                        elementoTemp.RevisionResistenciaBloqueCortante._dminRevisionResistenciaDesgarre = elementoTemp.RevisionResistenciaDesgarre.Dmin;
+                        elementoTemp.RevisionResistenciaBloqueCortante._sRevisionResistenciaDesgarre = elementoTemp.RevisionResistenciaDesgarre.S;
+                        elementoTemp.RevisionResistenciaBloqueCortante._ubs = Ubs;
+                        elementoTemp.RevisionResistenciaBloqueCortante._fu = Fu;
+                        elementoTemp.RevisionResistenciaBloqueCortante._fy = Fy;
+
+                        //Agregar el elementoTemp a la lista
+                        lista.Add(elementoTemp);
+                    }
+                    catch(OverflowException)
+                    {
+                        Console.WriteLine("Error");
+                    }
+                }
+            }
+            ElementosTornilleria elementosTornilleria = new ElementosTornilleria();
+            elementosTornilleria.ElementoTornillerias = lista.ToArray();
+            elementosTornilleria.Fu = Fu;
+            elementosTornilleria.Fy = Fy;
+            elementosTornilleria.Ubs = Ubs;
+            var options = new JsonSerializerOptions
+            {
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(elementosTornilleria, options);
+            int lent = jsonString.Length;
+            //TempData["elementosTornilleria"] = jsonString;
+            //return RedirectToAction("PlacaBase");
+            return Ok(jsonString);
+            /*var file = "Columna1.xlsx";
+            filename = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files\plantillas"}" + "\\" + file;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var libros = new XLWorkbook(filename))
+            {
+
+                //Obtener la hoja
+                var hoja = libros.Worksheet(1);
+                //Realizar los cambios
+                int cont = 7;
+                foreach (ElementoTornilleria elementoTornilleria in lista)
+                {
+                    //Nombre grupo
+                    hoja.Cell("AA" + cont).SetValue(elementoTornilleria.Grupo.Nombre);
+                    //Ubicacion
+                    hoja.Cell("AB" + cont).SetValue(elementoTornilleria.Grupo.Ubicacion);
+                    //Perfil nombre
+                    hoja.Cell("AC" + cont).SetValue(elementoTornilleria.Perfil.NombrePerfil);
+                    //Peso lineal
+                    hoja.Cell("AD" + cont).SetValue(elementoTornilleria.Perfil.Peso);
+                    //Gramil
+                    hoja.Cell("AE" + cont).SetValue(elementoTornilleria.Perfil.Gramil);
+                    //NO. tornillos
+                    hoja.Cell("AF" + cont).SetValue(elementoTornilleria.NTot);
+                    //Diametro
+                    hoja.Cell("AG" + cont).SetValue(elementoTornilleria.Tornillo.Dmin);
+
+                    cont++;
+                }
+
+                using (var memori = new MemoryStream())
+                {
+                    libros.SaveAs(memori);
+                    var nombreExcel = string.Concat("prueba", ".xlsx");
+
+                    return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                }
+            }*/
+        }
         public IActionResult PlacaBase(IFormCollection formCollection)
         {
             ViewData["grupo"] = formCollection["grupo"];
             ViewData["perfil"] = formCollection["perfil"];
             ViewData["nombrePiezaMarco"] = formCollection["nombrePiezaMarco"];
+            ViewData["_nombrePiezaMarco"] = formCollection["nombrePiezaMarco"];
+            //ElementosTornilleria t = JsonConvert.DeserializeObject<ElementosTornilleria>((string)TempData["elementosTornilleria"]);
+            //string t = TempData["elementosTornilleria"].ToString();
+
+            ViewData["datosJSON"] = formCollection["datosJSON"];
             //Obtener la lista de tamaños de Anclas
             //Para obtener ruta relativa
             List<Ancla> listaAnclas = LeerCSV.LeerListaAncla(_hostingEnvironment.WebRootPath);
@@ -188,7 +396,85 @@ namespace WebApplication1.Controllers
             ViewData["listaPerfiles"] = listaPerfiles;
             return View();
         }
+        public IActionResult ExportarResultados(IFormCollection formCollection)
+        {
+            //Obtener los datos del JSON en String
+            string datosString = formCollection["datosTornilleria"];
+            ElementosTornilleria elementosTornilleria = System.Text.Json.JsonSerializer.Deserialize<ElementosTornilleria>(datosString);
+            datosString = formCollection["datosTension"];
+            Models.PlacaBase.Tension.PlacaBase placaBaseTension =
+                System.Text.Json.JsonSerializer.Deserialize<Models.PlacaBase.Tension.PlacaBase>(datosString);
+            datosString = formCollection["datosCompresion"];
+            Models.PlacaBase.Compresion.PlacaBase placaBaseCompresion =
+                System.Text.Json.JsonSerializer.Deserialize<Models.PlacaBase.Compresion.PlacaBase>(datosString);
 
+            var numAnclas = placaBaseCompresion.Ancla.CantidadDeAnclas;
+            var diaAnclas = placaBaseCompresion.Ancla.DiametroAncla;
+            var anchoPlaca = placaBaseCompresion.AnchoPlaca;
+            var espesorPlaca = placaBaseTension.EspesorPlacaDefinitivo;
+            var distAlBordRecortMin = placaBaseCompresion.Ancla.DistanciaBordeRecortadoMin;
+            var distAlBordRecortMax = placaBaseCompresion.Ancla.DistanciaBordeRecortadoMax;
+
+            //Elegir que archivo leer en base a _nombrePiezaMarco
+            string _nombrePiezaMarco = formCollection["_nombrePiezaMarco"];
+            var file = "";
+            switch (_nombrePiezaMarco)
+            {
+                case "Columna 1": file = "Columna1.xlsx"; break;
+                case "Columna 2": file = "Columna2.xlsx"; break;
+                case "Columna 3": file = "Columna3.xlsx"; break;
+                case "Columna 4": file = "Columna4.xlsx"; break;
+                case "Trabe 1": break;
+                case "Trabe 2": break;
+                case "Trabe 3": break;
+            }
+            //Leer el archivo
+            string filename = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files\plantillas"}" + "\\" + file;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var libros = new XLWorkbook(filename))
+            {
+                //Obtener la hoja
+                var hoja = libros.Worksheet(1);
+                //Realizar los cambios
+                int cont = 7;
+                foreach (ElementoTornilleria elementoTornilleria in elementosTornilleria.ElementoTornillerias)
+                {
+                    //Nombre grupo
+                    hoja.Cell("AA" + cont).SetValue(elementoTornilleria.Grupo.Nombre);
+                    //Ubicacion
+                    hoja.Cell("AB" + cont).SetValue(elementoTornilleria.Grupo.Ubicacion);
+                    //Perfil nombre
+                    hoja.Cell("AC" + cont).SetValue(elementoTornilleria.Perfil.NombrePerfil);
+                    //Peso lineal
+                    hoja.Cell("AD" + cont).SetValue(elementoTornilleria.Perfil.Peso);
+                    //Gramil
+                    hoja.Cell("AE" + cont).SetValue(elementoTornilleria.Perfil.Gramil);
+                    //NO. tornillos
+                    hoja.Cell("AF" + cont).SetValue(elementoTornilleria.NTot);
+                    //Diametro
+                    hoja.Cell("AG" + cont).SetValue(elementoTornilleria.Tornillo.Dmin);
+
+                    cont++;
+                }
+                hoja.Cell("AA3").SetValue(elementosTornilleria.ElementoTornillerias[0].Grupo.Nombre);
+                hoja.Cell("AB3").SetValue(elementosTornilleria.ElementoTornillerias[0].Grupo.Ubicacion);
+                hoja.Cell("AC3").SetValue(anchoPlaca);
+                hoja.Cell("AD3").SetValue(espesorPlaca);
+                hoja.Cell("AE3").SetValue(numAnclas);
+                hoja.Cell("AF3").SetValue(diaAnclas);
+                hoja.Cell("AG3").SetValue(distAlBordRecortMin);
+                hoja.Cell("AH3").SetValue(distAlBordRecortMax);
+
+                using (var memori = new MemoryStream())
+                {
+                    libros.SaveAs(memori);
+                    var nombreExcel = string.Concat("prueba", ".xlsx");
+
+                    return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                }
+            }
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -197,7 +483,7 @@ namespace WebApplication1.Controllers
         public IActionResult PlacaColumna(IFormCollection formCollection)
         {
             //Para obtener ruta relativa
-            List<Ancla> listaAnclas = LeerCSV.LeerListaAncla(_hostingEnvironment.WebRootPath);
+            List<Models.Ancla> listaAnclas = LeerCSV.LeerListaAncla(_hostingEnvironment.WebRootPath);
             ViewData["listaAnclas"] = listaAnclas;
             //Obtener la lista de Perfiles con sus lados y centroides
             //Para obtener ruta relativa
@@ -205,6 +491,95 @@ namespace WebApplication1.Controllers
             ViewData["listaPerfiles"] = listaPerfiles;
             return View();
         }
+        public IActionResult Exportar(List<ElementoTornilleria> lista)
+        {
+            var file = "Columna1.xlsx";
+            var filename = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\files\plantillas"}" + "\\" + file;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var libros = new XLWorkbook(filename))
+            {
+
+                //Obtener la hoja
+                var hoja = libros.Worksheet(1);
+                //Realizar los cambios
+                int cont = 7;
+                foreach (ElementoTornilleria elementoTornilleria in lista)
+                {
+                    //Nombre grupo
+                    hoja.Cell("AA" + cont).SetValue("Nombre grupo");
+                    //Ubicacion
+                    hoja.Cell("AB" + cont).SetValue("Ubicación");
+                    //Perfil nombre
+                    hoja.Cell("AC" + cont).SetValue(elementoTornilleria.Perfil.NombrePerfil);
+                    //Peso lineal
+                    hoja.Cell("AD" + cont).SetValue("Peso lineal");
+                    //Gramil
+                    hoja.Cell("AE" + cont).SetValue(elementoTornilleria.Perfil.Gramil);
+                    //NO. tornillos
+                    hoja.Cell("AF" + cont).SetValue(elementoTornilleria.NTot);
+                    //Diametro
+                    hoja.Cell("AG" + cont).SetValue("Diametro");
+                    cont++;
+                }
+                //librohoja.Cell("B3").SetValue(Mensaje);
+                
+                
+                //librohoja.ColumnsUsed().AdjustToContents();
+                
+
+                using (var memori = new MemoryStream())
+                {
+                    libros.SaveAs(memori);
+                    var nombreExcel = string.Concat("prueba", ".xlsx");
+
+                    return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                }
+            }
+
+        }
+        public IActionResult llenarPlantilla(List<ElementoTornilleria> lista)
+        {
+            SLDocument sl = new SLDocument(
+                System.IO.Path.Combine(_hostingEnvironment.WebRootPath + "/files/plantillas/",
+                "Columna1.xlsx"));
+
+            var dateAndTime = DateTime.Now;
+            string mensaje = "Informe del " + dateAndTime.ToString("dd/MM/yyyy") + " de la Norma Oficial Mexicana NOM-010-ENER. Eficiencia energética del conjunto motor-bomba sumergible tipo pozo profundo.";
+
+            //sl.SetCellValue("A2", mensaje);
+            int cont = 7;
+            foreach (ElementoTornilleria elementoTornilleria in lista)
+            {
+                //Nombre grupo
+                sl.SetCellValue("AA" + cont, "Nombre grupo");
+                //Ubicacion
+                sl.SetCellValue("AB" + cont, "Ubicación");
+                //Perfil nombre
+                sl.SetCellValue("AC" + cont, elementoTornilleria.Perfil.NombrePerfil);
+                //Peso lineal
+                sl.SetCellValue("AD" + cont, "Peso lineal");
+                //Gramil
+                sl.SetCellValue("AE" + cont, elementoTornilleria.Perfil.Gramil);
+                //NO. tornillos
+                sl.SetCellValue("AF" + cont, elementoTornilleria.NTot);
+                //Diametro
+                sl.SetCellValue("AG" + cont, "Diametro");
+                cont++;
+            }
+
+
+
+            using (var memori = new MemoryStream())
+            {
+                sl.SaveAs(memori);
+                var nombreExcel = string.Concat("prueba", ".xlsx");
+
+                return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+            }
+        }
+
+
     }
 }
     

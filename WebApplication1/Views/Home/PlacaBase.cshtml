@@ -46,6 +46,8 @@
         <span class="font-weight-bold">Perfil: </span>@ViewData["perfil"]
     </div>
 </div>
+
+
 <!--Imagen 1 y Datos de concreto, Acero placa y anclas-->
 <div class="row">
     <!--Imagen 1-->
@@ -151,13 +153,13 @@
                     </div>
                 </div>
                 <div class="row mt-1">
-                    <label class="col-md-7 col-form-label cols" for="dist_borde_recortado_det">Dist. borde recortado detallado</label>
+                    <label class="col-md-7 col-form-label cols" for="dist_borde_recortado_det">Dist. borde recortado (mm)</label>
                     <div class="col-md-5 cols">
                         <input id="dist_borde_recortado_det" type="text" class="form-control" />
                     </div>
                 </div>
                 <div class="row mt-1">
-                    <label class="col-md-7 col-form-label cols" for="espesor_propuesto_placa">Espesor propuesto de placa</label>
+                    <label class="col-md-7 col-form-label cols" for="espesor_propuesto_placa">Espesor propuesto de placa (mm)</label>
                     <div class="col-md-5 cols">
                         <input id="espesor_propuesto_placa" type="text" class="form-control" />
                     </div>
@@ -212,7 +214,7 @@
     </div>
     <div class="col-12">
         <input id="Button1" type="button" value="Calcular" class="btn btn-success  btn-block mt-1" onclick="calcular()" />
-        <a href="javascript:history.back()" class="btn btn-danger  btn-block mt-1">Volver atrás</a>
+        @*<a href="javascript:history.back()" class="btn btn-danger  btn-block mt-1">Volver atrás</a>*@
     </div>
 </div>
 <!--Resultados-->
@@ -318,7 +320,7 @@
         </div>
     </div>
 </div>
-<pre id="JSON"></pre>
+<pre id="JSON" style="display: none;"></pre>
 
 <div style="display: none" id="resultados2">
     <h3>Revisión de Compresión</h3>
@@ -378,77 +380,89 @@
                 </div>
             </div>
         </div>
-    <div class="col-lg-3">
-        <div class="card">
-            <div class="card-body bg-card-body">
-                <div class="row">
-                    <div class="col-7">
-                        Esp. placa por compresión
-                    </div>
-                    <div class="col-5" id="c_espesor_placa_compresion">
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body bg-card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            Esp. placa por compresión
+                        </div>
+                        <div class="col-5" id="c_espesor_placa_compresion">
 
+                        </div>
                     </div>
-                </div>
 
-                <h5 class="mt-2">
-                    Aplast. x el cortante, placa
-                </h5>
-                <div class="row">
-                    <div class="col-7">
-                        Ra.
-                        Ancla
-                    </div>
-                    <div class="col-5" id="c_ra_ancla">
+                    <h5 class="mt-2">
+                        Aplast. x el cortante, placa
+                    </h5>
+                    <div class="row">
+                        <div class="col-7">
+                            Ra.
+                            Ancla
+                        </div>
+                        <div class="col-5" id="c_ra_ancla">
 
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-7">
-                        Resistencia aplastamiento
-                    </div>
-                    <div class="col-5" id="c_resistencia_aplastamiento">
+                    <div class="row">
+                        <div class="col-7">
+                            Resistencia aplastamiento
+                        </div>
+                        <div class="col-5" id="c_resistencia_aplastamiento">
 
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-7">
-                        % Aplastamiento
-                    </div>
-                    <div class="col-5" id="c_por_aplastamiento">
+                    <div class="row">
+                        <div class="col-7">
+                            % Aplastamiento
+                        </div>
+                        <div class="col-5" id="c_por_aplastamiento">
 
+                        </div>
                     </div>
-                </div>
-                <h5 class="mt-2">
-                    Cortante en anclas
-                </h5>
-                <div class="row">
-                    <div class="col-7">
-                        RV 1 Ancla
-                    </div>
-                    <div class="col-5" id="c_rv_1_ancla">
+                    <h5 class="mt-2">
+                        Cortante en anclas
+                    </h5>
+                    <div class="row">
+                        <div class="col-7">
+                            RV 1 Ancla
+                        </div>
+                        <div class="col-5" id="c_rv_1_ancla">
 
-                    </div>
-                    <div class="col-7">
-                        Resis. cort.
-                    </div>
-                    <div class="col-5" id="c_resis_cort">
+                        </div>
+                        <div class="col-7">
+                            Resis. cort.
+                        </div>
+                        <div class="col-5" id="c_resis_cort">
 
-                    </div>
-                    <div class="col-7">
-                        %cor
-                        Anc
-                    </div>
-                    <div class="col-5" id="c_porc_cor_anc">
+                        </div>
+                        <div class="col-7">
+                            %cor
+                            Anc
+                        </div>
+                        <div class="col-5" id="c_porc_cor_anc">
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        </div>
 </div>
-<pre id="JSON2"></pre>
 
+<pre id="JSON2" style="display: none;"></pre>
+<div class="col-12" style="display: none;" id="button_import">
+    @Html.AntiForgeryToken()
+    @using (Html.BeginForm("ExportarResultados", "home", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" value="@ViewData["datosJSON"]" name="datosTornilleria" id="datosTornilleria" />
+        <input type="hidden" id="hidden_datos_tension" name="datosTension" />
+        <input type="hidden" id="hidden_datos_compresion" name="datosCompresion" />
+        <input type="hidden" name="_nombrePiezaMarco" value="@ViewData["_nombrePiezaMarco"]"/>
+        <input type="submit" value="Exportar resultados" class="btn btn-secondary  btn-block mt-1" />
+    }
+</div>
 <script>
 
     //Al iniciar, poner las variables de perfil con los valores del perfil 1
@@ -521,8 +535,8 @@
         var EspPlacaPorTensión;
         //Consumir API Tension
         //fetch(`http://www.apitornilleria.somee.com/api/RevisionTension/`, {
-        //fetch(`https://localhost:44343/api/RevisionTension/`, {
-        fetch(`http://hugoblancas-001-site1.ctempurl.com/api/RevisionTension/`, {
+        fetch(`/api/RevisionTension/`, {
+        //fetch(`http://hugoblancas-001-site1.ctempurl.com/api/RevisionTension/`, {
             method: 'POST',
             body: JSON.stringify(JSONconsultaTension),
             headers: {
@@ -531,8 +545,8 @@
         })
             .then(response => response.json())
             .then(json => {
-
-
+                //Guardar los datos en inputHidden
+                document.getElementById("hidden_datos_tension").value = JSON.stringify(json)
                 console.log(json);
                 document.getElementById("JSON").innerHTML = json;
                 $('#JSON').html(syntaxHighlight(json));
@@ -542,21 +556,21 @@
                 window.location.hash = "resultados";
                 //Poner los valores
                 //Zona 1
-                    document.getElementById("t_zr1_ancho_franja").innerHTML = json.zonaRevision1.anchoDeLaFranja.toFixed(2);
-                    document.getElementById("t_zr1_momento").innerHTML = json.zonaRevision1.momento.toFixed(2);
-                    document.getElementById("t_zr1_espesor_placa").innerHTML = json.zonaRevision1.espesorPlaca.toFixed(2);
+                    document.getElementById("t_zr1_ancho_franja").innerHTML = json.ZonaRevision1.AnchoDeLaFranja.toFixed(2);
+                    document.getElementById("t_zr1_momento").innerHTML = json.ZonaRevision1.Momento.toFixed(2);
+                    document.getElementById("t_zr1_espesor_placa").innerHTML = json.ZonaRevision1.EspesorPlaca.toFixed(2);
                 //Zona 2
-                document.getElementById("t_zr2_largo_franja").innerHTML = json.zonaRevision2.largoDeLaFranja.toFixed(2);
-                document.getElementById("t_zr2_momento").innerHTML = json.zonaRevision2.momento.toFixed(2);
-                document.getElementById("t_zr2_espesor_placa").innerHTML = json.zonaRevision2.espesorPlaca.toFixed(2);
+                document.getElementById("t_zr2_largo_franja").innerHTML = json.ZonaRevision2.LargoDeLaFranja.toFixed(2);
+                document.getElementById("t_zr2_momento").innerHTML = json.ZonaRevision2.Momento.toFixed(2);
+                document.getElementById("t_zr2_espesor_placa").innerHTML = json.ZonaRevision2.EspesorPlaca.toFixed(2);
                 //
-                document.getElementById("t_espesor_placa_definitivo").innerHTML = json.espesorPlacaDefinitivo.toFixed(2);
+                document.getElementById("t_espesor_placa_definitivo").innerHTML = json.EspesorPlacaDefinitivo.toFixed(2);
 
-                document.getElementById("t_ten_v").innerHTML = json.porcentajeTen_V.toFixed(2);
+                document.getElementById("t_ten_v").innerHTML = json.PorcentajeTen_V.toFixed(2);
 
                 //Cambiar el color de la tarjeta (correcto/incorrecto)
                 var tarjeta = document.getElementById("div-color");
-                if (json.porcentajeTen_V < 95) {
+                if (json.PorcentajeTen_V < 95) {
                     tarjeta.classList.remove("incorrecto");
                     tarjeta.classList.add("correcto");
                 }
@@ -564,7 +578,7 @@
                     tarjeta.classList.remove("correcto");
                     tarjeta.classList.add("incorrecto");
                 }
-                calcularCompresion(json.espesorPlacaDefinitivo);
+                calcularCompresion(json.EspesorPlacaDefinitivo);
             })
             .catch(err => {
                 console.log(err)
@@ -600,9 +614,9 @@
 
         console.log(JSONconsultaCompresion);
         //Consumir API Compresion
-        //fetch(`https://localhost:44343/api/RevisionCompresion/`, {
+        fetch(`/api/RevisionCompresion/`, {
         //fetch(` http://www.apitornilleria.somee.com/api/RevisionCompresion/`, {
-        fetch(` http://hugoblancas-001-site1.ctempurl.com/api/RevisionCompresion/`, {
+        //fetch(` http://hugoblancas-001-site1.ctempurl.com/api/RevisionCompresion/`, {
             method: 'POST',
             body: JSON.stringify(JSONconsultaCompresion),
             headers: {
@@ -611,28 +625,35 @@
         })
             .then(response => response.json())
             .then(json => {
+                //Guardar los datos en inputHidden
+                document.getElementById("hidden_datos_compresion").value = JSON.stringify(json)
                 //mostrar resultados
                 resultado = document.getElementById("resultados2");
                 resultado.style.display = "block";
+                //Mostrar boton de importar
+                if (document.getElementById("datosTornilleria").value) {
+                    document.getElementById('button_import').style.display = 'block';
+                }
+                
                 console.log(json);
                 //Vista temporal
                 document.getElementById("JSON2").innerHTML = json;
                 $('#JSON2').html(syntaxHighlight(json));
                 //Poner los valores
                 //Zona 1
-                document.getElementById("c_zr1_Mn").innerHTML = json.zonaRevision1.mn.toFixed(2);
+                document.getElementById("c_zr1_Mn").innerHTML = json.ZonaRevision1.Mn.toFixed(2);
                 //Zona 2
-                document.getElementById("c_zr2_Mn").innerHTML = json.zonaRevision2.mn.toFixed(2);
+                document.getElementById("c_zr2_Mn").innerHTML = json.ZonaRevision2.Mn.toFixed(2);
                 //Zona 3
-                document.getElementById("c_zr3_Mn").innerHTML = json.zonaRevision3.mn.toFixed(2);
+                document.getElementById("c_zr3_Mn").innerHTML = json.ZonaRevision3.Mn.toFixed(2);
                 //Demas datos
-                document.getElementById("c_espesor_placa_compresion").innerHTML = json.espPlacaPorCompresión.toFixed(2);
-                document.getElementById("c_ra_ancla").innerHTML = json.raAncla.toFixed(2);
-                document.getElementById("c_resistencia_aplastamiento").innerHTML = json.resisAplastamiento.toFixed(2);
-                document.getElementById("c_por_aplastamiento").innerHTML = json.porcentajeApla.toFixed(2);
-                document.getElementById("c_rv_1_ancla").innerHTML = json.rV1Ancla.toFixed(2);
-                document.getElementById("c_resis_cort").innerHTML = json.resisCort.toFixed(2);
-                document.getElementById("c_porc_cor_anc").innerHTML = json.porcentajeCorAncla.toFixed(2);
+                document.getElementById("c_espesor_placa_compresion").innerHTML = json.EspPlacaPorCompresión.toFixed(2);
+                document.getElementById("c_ra_ancla").innerHTML = json.RaAncla.toFixed(2);
+                document.getElementById("c_resistencia_aplastamiento").innerHTML = json.ResisAplastamiento.toFixed(2);
+                document.getElementById("c_por_aplastamiento").innerHTML = json.PorcentajeApla.toFixed(2);
+                document.getElementById("c_rv_1_ancla").innerHTML = json.RV1Ancla.toFixed(2);
+                document.getElementById("c_resis_cort").innerHTML = json.ResisCort.toFixed(2);
+                document.getElementById("c_porc_cor_anc").innerHTML = json.PorcentajeCorAncla.toFixed(2);
 
 
             })
