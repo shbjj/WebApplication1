@@ -469,7 +469,7 @@ namespace WebApplication1.Controllers
                 using (var memori = new MemoryStream())
                 {
                     libros.SaveAs(memori);
-                    var nombreExcel = string.Concat("prueba", ".xlsx");
+                    var nombreExcel = string.Concat(_nombrePiezaMarco, ".xlsx");
 
                     return File(memori.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
                 }
